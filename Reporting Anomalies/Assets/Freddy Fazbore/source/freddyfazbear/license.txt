@@ -1,0 +1,11 @@
+Model Information:
+* title:	RynFox FNAF 1 Freddy Vlast
+* source:	https://sketchfab.com/3d-models/rynfox-fnaf-1-freddy-vlast-b23583f26e094764ad312e06fdad74c4
+* author:	HarrisonHag1 (https://sketchfab.com/HarrisonHag1)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "RynFox FNAF 1 Freddy Vlast" (https://sketchfab.com/3d-models/rynfox-fnaf-1-freddy-vlast-b23583f26e094764ad312e06fdad74c4) by HarrisonHag1 (https://sketchfab.com/HarrisonHag1) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
