@@ -43,6 +43,7 @@ public class BedroomAnomalies : MonoBehaviour {
 
    public void CheckFix () {
       Mod.ActiveAnomalies--;
+      ActiveAnomalies[Mod.AnomalyType] = false;
       switch (Mod.AnomalyType) {
          case 0:
             FixIntruder();
@@ -85,30 +86,39 @@ public class BedroomAnomalies : MonoBehaviour {
 
       switch (RandomAnomaly) {
          case 0:
+            Mod.LogAnomalies("Intruder", "Bedroom");
             IntruderInit();
             break;
          case 1:
+            Mod.LogAnomalies("Extra Object", "Bedroom");
             ExtraInit();
             break;
          case 2:
+            Mod.LogAnomalies("Object Disappearance", "Bedroom");
             DisappearInit();
             break;
          case 3:
+            Mod.LogAnomalies("Light", "Bedroom");
             LightInit();
             break;
          case 4:
+            Mod.LogAnomalies("Door Opening", "Bedroom");
             DoorInit();
             break;
          case 5:
+            Mod.LogAnomalies("Camera Malfunction", "Bedroom");
             CameraInit();
             break;
          case 6:
+            Mod.LogAnomalies("Object Movement", "Bedroom");
             MoveInit();
             break;
          case 7:
+            Mod.LogAnomalies("Painting", "Bedroom");
             PaintingInit();
             break;
          case 8:
+            Mod.LogAnomalies("Abyss Presence", "Bedroom");
             AbyssInit();
             break;
       }
@@ -134,6 +144,12 @@ public class BedroomAnomalies : MonoBehaviour {
          var duration = .25f;
          var elapsed = 0f;
          while (elapsed < duration) {
+            if (Mod.CameraPos != 0) {
+               Music.volume = 0;
+            }
+            else {
+               Music.volume = 1;
+            }
             Intruder.transform.localEulerAngles = new Vector3(270, Mathf.Lerp(0, 359, elapsed / duration), 0);
             yield return null;
             elapsed += Time.deltaTime;

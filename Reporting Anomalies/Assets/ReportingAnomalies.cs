@@ -40,6 +40,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public TextMesh NowViewingText;
    string[] RoomNames = { "bedroom", "dungeon"};
    public BedroomAnomalies Yeah;
+   public LibraryAnomalies Libr;
    public int BrokenCam = -1;
 
    public int RoomLocation = -1;
@@ -63,8 +64,11 @@ public class ReportingAnomalies : MonoBehaviour {
 
    public int CameraPos;
 
+   //Coroutine PSBScreen;
+
    static int ModuleIdCounter = 1;
-   int ModuleId;
+   public int ModuleId;
+   int SolveCount;
    private bool ModuleSolved;
 
    void Awake () {
@@ -113,9 +117,20 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    void Start () {
+
       Menu.SetActive(false);
       StartCoroutine(StartAnim());
       StartCoroutine(Test());
+   }
+
+   IEnumerator Test () {
+      yield return new WaitForSeconds(2f);
+      Libr.ChooseAnomaly();
+      //Yeah.MoveInit();
+   }
+
+   public void LogAnomalies (string AType, string RType) {
+      Debug.LogFormat("[Reporting Anomalies #{0}] Creating a(n) {1} Anomaly in {2} at solve #{3}.", ModuleId, AType, RType, SolveCount);
    }
 
    void OpenMenu () {
@@ -161,6 +176,22 @@ public class ReportingAnomalies : MonoBehaviour {
          case 0:
             if (Yeah.ActiveAnomalies[AnomalyType]) {
                StartCoroutine(FixingScreen());
+               while (PleaseStandBy.activeSelf) {
+                  yield return null;
+               }
+               Yeah.CheckFix();
+            }
+            else {
+               StartCoroutine(WrongAnomaly());
+            }
+            break;
+         case 1:
+            if (Libr.ActiveAnomalies[AnomalyType]) {
+               StartCoroutine(FixingScreen());
+               while (PleaseStandBy.activeSelf) {
+                  yield return null;
+               }
+               Libr.CheckFix();
             }
             else {
                StartCoroutine(WrongAnomaly());
@@ -176,7 +207,6 @@ public class ReportingAnomalies : MonoBehaviour {
       Audio.PlaySoundAtTransform("Fixing", transform);
       yield return new WaitForSeconds(1.368f);
       PleaseStandBy.SetActive(false);
-      Yeah.CheckFix();
    }
 
    IEnumerator WrongAnomaly () {
@@ -216,12 +246,6 @@ public class ReportingAnomalies : MonoBehaviour {
          WarningT.text = "";
       }
       WarningSystem.SetActive(false);
-   }
-
-   IEnumerator Test () {
-      yield return new WaitForSeconds(2f);
-      Yeah.ChooseAnomaly();
-      //Yeah.MoveInit();
    }
 
    void LeftPress () {
