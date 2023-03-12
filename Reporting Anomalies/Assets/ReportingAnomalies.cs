@@ -38,7 +38,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public Material[] CameraMats;
    public GameObject Screen;
    public TextMesh NowViewingText;
-   string[] RoomNames = { "bedroom", "dungeon"};
+   string[] RoomNames = { "bedroom", "dungeon", "living room"};
    public BedroomAnomalies Yeah;
    public LibraryAnomalies Libr;
    public int BrokenCam = -1;
@@ -125,7 +125,7 @@ public class ReportingAnomalies : MonoBehaviour {
 
    IEnumerator Test () {
       yield return new WaitForSeconds(2f);
-      Yeah.CameraInit();
+      //Yeah.CameraInit();
       //Yeah.MoveInit();
    }
 
