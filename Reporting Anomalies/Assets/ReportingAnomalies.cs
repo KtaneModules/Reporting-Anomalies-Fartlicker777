@@ -125,7 +125,7 @@ public class ReportingAnomalies : MonoBehaviour {
 
    IEnumerator Test () {
       yield return new WaitForSeconds(2f);
-      Libr.ChooseAnomaly();
+      Yeah.CameraInit();
       //Yeah.MoveInit();
    }
 

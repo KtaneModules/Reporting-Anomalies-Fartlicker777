@@ -2781,7 +2781,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1297400599116532
 GameObject:
   m_ObjectHideFlags: 1
@@ -34832,7 +34832,6 @@ MonoBehaviour:
   - {fileID: 1658484849338292}
   - {fileID: 1512249475787090}
   - {fileID: 1410829245982704}
-  - {fileID: 1021580900685070}
   LightAnomaly:
   - {fileID: 1710203242374150}
   - {fileID: 1597048812877882}
