@@ -50,6 +50,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public LibraryAnomalies Libr;
    public LivingRoomAnomalies Livi;
    public int BrokenCam = -1;
+   static int StaticCam = -1;
 
    public int RoomLocation = -1;
    public int AnomalyType = -1;
@@ -193,6 +194,7 @@ public class ReportingAnomalies : MonoBehaviour {
    void Exploded () {
       FirstRAPresent = false;
       ModuleSolved = false;
+      StaticCam = -1;
    }
 
    void AnomButtPress (KMSelectable B) {
@@ -414,6 +416,7 @@ public class ReportingAnomalies : MonoBehaviour {
             Livi.ChooseAnomaly();
             break;
       }
+      StaticCam = BrokenCam;
    }
 
    IEnumerator FlipWarningState () {
@@ -452,6 +455,11 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    void Update () {
+      BrokenCam = StaticCam;
+      if (CameraPos == BrokenCam) {
+         RightButton.OnInteract();
+      }
+
       if (ModuleSolved || !WaitForModCount) {
          return;
       }

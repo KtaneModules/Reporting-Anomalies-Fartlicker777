@@ -150,6 +150,7 @@ public class BedroomAnomalies : MonoBehaviour {
                Music.volume = 0;
             }
             else {
+               Music.clip = HarHar;
                Music.volume = 1;
             }
             Intruder.transform.localEulerAngles = new Vector3(270, Mathf.Lerp(0, 359, elapsed / duration), 0);

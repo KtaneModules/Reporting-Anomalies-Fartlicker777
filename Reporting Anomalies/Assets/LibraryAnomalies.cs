@@ -170,6 +170,7 @@ public class LibraryAnomalies : MonoBehaviour {
             Music.volume = 0;
          }
          else {
+            Music.clip = SBTheme;
             Music.volume = .25f;
          }
          counter++;

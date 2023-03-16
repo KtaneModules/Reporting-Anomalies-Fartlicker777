@@ -62,11 +62,11 @@ public class LivingRoomAnomalies : MonoBehaviour {
             break;
          case 1:
             FixExtra();
-            Mod.LogAnomalies(new string[] { "rug", "chair", "tea set", "wine bottle" }[ExtraObj]);
+            Mod.LogAnomalies(new string[] { "Rug", "Chair", "Tea set", "Wine bottle" }[ExtraObj]);
             break;
          case 2:
             FixDisappear();
-            Mod.LogAnomalies(new string[] { "hood", "mug that you probably didn't see to begin with", "blue pillow", "coffee table that you probably didn't see to begin with", "dining table", "chair", "ottoman" }[DisObj]);
+            Mod.LogAnomalies(new string[] { "Hood", "Mug that you probably didn't see to begin with", "Blue pillow", "Coffee table that you probably didn't see to begin with", "Dining table", "Chair", "Ottoman" }[DisObj]);
             break;
          case 3:
             FixLight();
@@ -79,7 +79,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
             break;
          case 6:
             FixMove();
-            Mod.LogAnomalies(new string[] { "right couch", "clock hands", "outlets that you probably didn't see to begin with" }[MovedObject]);
+            Mod.LogAnomalies(new string[] { "Right couch", "Clock hands", "Outlets that you probably didn't see to begin with" }[MovedObject]);
             break;
          case 7:
             FixPainting();
@@ -153,9 +153,10 @@ public class LivingRoomAnomalies : MonoBehaviour {
       //Intruder.SetActive(true);
       while (true) {
          if (Mod.CameraPos != 2) {
-            Music.volume = 2;
+            Music.volume = 0;
          }
          else {
+            Music.clip = TankTheme;
             Music.volume = .66f;
          }
          yield return null;
