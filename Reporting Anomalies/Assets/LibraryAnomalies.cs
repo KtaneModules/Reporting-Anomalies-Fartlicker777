@@ -10,6 +10,8 @@ public class LibraryAnomalies : MonoBehaviour {
    public ReportingAnomalies Mod;
 
    public SpriteRenderer Intruder;
+   public AudioClip SBTheme;
+
    public Sprite[] SpaceBoyfriend;
 
    public GameObject[] ExtraObjects;
@@ -101,45 +103,44 @@ public class LibraryAnomalies : MonoBehaviour {
       int RandomAnomaly = Rnd.Range(0, 9);
       do {
          RandomAnomaly = Rnd.Range(0, 9);
-      } while (ActiveAnomalies[RandomAnomaly] || RandomAnomaly == 7);
+      } while (ActiveAnomalies[RandomAnomaly] || RandomAnomaly == 7 || (Mod.BrokenCam != -1 && RandomAnomaly == 5));
 
       ActiveAnomalies[RandomAnomaly] = true;
 
+      string[] ATypes = { "Intruder", "Extra Object", "Object Disappearance", "Light", "Door Opening", "Camera Malfunction", "Object Movement", "Painting", "Abyss Presence" };
+
+      Mod.LogAnomalies(ATypes[RandomAnomaly], "Library");
+
       switch (RandomAnomaly) {
          case 0:
-            Mod.LogAnomalies("Intruder", "Library");
             IntruderInit();
             break;
          case 1:
-            Mod.LogAnomalies("Extra Object", "Library");
             ExtraInit();
+            Mod.LogAnomalies(new string[] { "candle", "book", "chandelier", "sword" }[ExtraObj]);
             break;
          case 2:
-            Mod.LogAnomalies("Object Disappearance", "Library");
             DisappearInit();
+            Mod.LogAnomalies(new string[] { "close bookshelf", "far bookshelf" }[DisObj]);
             break;
          case 3:
-            Mod.LogAnomalies("Light", "Library");
             LightInit();
+            Mod.LogAnomalies(new string[] { "close chandelier", "far chandelier", "table candles" }[LightIndex]);
             break;
          case 4:
-            Mod.LogAnomalies("Door Opening", "Library");
             DoorInit();
             break;
          case 5:
-            Mod.LogAnomalies("Camera Malfunction", "Library");
             CameraInit();
             break;
          case 6:
-            Mod.LogAnomalies("Object Movement", "Library");
             MoveInit();
+            Mod.LogAnomalies(new string[] { "book", "far candle", "fallen close chandelier", "fallen far chandelier", "rotated chandeliers"}[MovedObject]);
             break;
          case 7:
-            Mod.LogAnomalies("Painting", "Library");
             PaintingInit();
             break;
          case 8:
-            Mod.LogAnomalies("Abyss Presence", "Library");
             AbyssInit();
             break;
       }
@@ -150,18 +151,27 @@ public class LibraryAnomalies : MonoBehaviour {
    public void IntruderInit () {
       //Intruder.SetActive(true);
       IntruderCor = StartCoroutine(SpaceBoyfriendAnim());
-      //Music.Play();
+      Music.clip = SBTheme;
+      //Music.volume = .25f;
+      Music.Play();
    }
 
    public void FixIntruder () {
       Intruder.sprite = null;
-      //Music.Stop();
+      //Music.volume = 1f;
+      Music.Stop();
       StopCoroutine(IntruderCor);
    }
 
    IEnumerator SpaceBoyfriendAnim () {
       int counter = 0;
       while (true) {
+         if (Mod.CameraPos != 1) {
+            Music.volume = 0;
+         }
+         else {
+            Music.volume = .25f;
+         }
          counter++;
          counter %= 4;
          Intruder.sprite = SpaceBoyfriend[counter];
@@ -203,6 +213,7 @@ public class LibraryAnomalies : MonoBehaviour {
 
    public void LightInit () {
       LightIndex = Rnd.Range(0, 3);
+      LightIndex = 2;
       for (int i = 0; i < 4; i++) {
          LightAnomaly[i + 4 * LightIndex].SetActive(false);
          FiresForCandles[i + 4 * LightIndex].SetActive(false);
@@ -210,7 +221,6 @@ public class LibraryAnomalies : MonoBehaviour {
    }
 
    public void FixLight () {
-      LightIndex = Rnd.Range(0, 3);
       for (int i = 0; i < 4; i++) {
          LightAnomaly[i + 4 * LightIndex].SetActive(true);
          FiresForCandles[i + 4 * LightIndex].SetActive(true);
@@ -259,12 +269,12 @@ public class LibraryAnomalies : MonoBehaviour {
 
    public void PaintingInit () {
       Debug.Log("A PAINTING ANOMALY HAS OCCURED IN LIBRARY. AUTOMATICALLY SOLVING.");
-      Mod.GetComponent<KMBombModule>().HandlePass();
+      Mod.Solve();
    }
 
    public void FixPainting () {
       Debug.Log("A PAINTING ANOMALY HAS BEEN FIXED IN LIBRARY SOMEHOW. AUTOMATICALLY SOLVING.");
-      Mod.GetComponent<KMBombModule>().HandlePass();
+      Mod.Solve();
    }
 
    #endregion
@@ -273,6 +283,7 @@ public class LibraryAnomalies : MonoBehaviour {
 
    public void MoveInit () {
       MovedObject = Rnd.Range(0, ObjectMovement.Length + 1);
+      MovedObject = 2;
       /*do {
          MovedObject = Rnd.Range(0, 3);
       } while ((PCDis && MovedObject == 1) || (PCMove && MovedObject == 2));
@@ -290,6 +301,7 @@ public class LibraryAnomalies : MonoBehaviour {
    }
 
    public IEnumerator ShowMove () {
+      Debug.Log(ObjectMovement[2].transform.localPosition.y);
       var duration = .25f;
       var elapsed = 0f;
       switch (MovedObject) {
@@ -309,32 +321,36 @@ public class LibraryAnomalies : MonoBehaviour {
             To = -30.46f;
 
             while (elapsed < duration) {
-               ObjectMovement[1].transform.localPosition = new Vector3(-3.5f, 1.289f, Mathf.Lerp(From, To, elapsed / duration));
+               ObjectMovement[1].transform.localPosition = new Vector3(-3.5f, 1.289f, Mathf.Lerp(-27.775f, -30.46f, elapsed / duration));
                yield return null;
                elapsed += Time.deltaTime;
             }
             break;
          case 2:
 
+            
+
             duration = .15f;
-            From = ObjectMovement[0].transform.localPosition.y;
+            From = 5.019f;
             To = 0.24f;
 
-            while (elapsed < duration) {
-               ObjectMovement[2].transform.localPosition = new Vector3(-0.1682601f, Mathf.Lerp(From, To, elapsed / duration), -29.279f);
+            while (ObjectMovement[2].transform.localPosition.y > 0.24f) { //This is fucking stupid
+               ObjectMovement[2].transform.localPosition = new Vector3(-0.1682601f, Mathf.Lerp(5.019f, 0.24f, elapsed / duration), -29.279f);
                //ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(0, -21.163f, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
             }
+
+            //Debug.Log(ObjectMovement[2].transform.localPosition.y);
             break;
          case 3:
 
             duration = .15f;
-            From = ObjectMovement[0].transform.localPosition.y;
+            From = 5.019f;
             To = 0.24f;
 
-            while (elapsed < duration) {
-               ObjectMovement[3].transform.localPosition = new Vector3(-6.017f, Mathf.Lerp(From, To, elapsed / duration), -29.279f);
+            while (ObjectMovement[3].transform.localPosition.y > 0.24f) {
+               ObjectMovement[3].transform.localPosition = new Vector3(-6.017f, Mathf.Lerp(5.019f, 0.24f, elapsed / duration), -29.279f);
                //ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(0, -21.163f, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
@@ -393,7 +409,7 @@ public class LibraryAnomalies : MonoBehaviour {
          case 1:
 
             while (elapsed < duration) {
-               ObjectMovement[1].transform.localPosition = new Vector3(-3.5f, 1.289f, Mathf.Lerp(To, From, elapsed / duration));
+               ObjectMovement[1].transform.localPosition = new Vector3(-3.5f, 1.289f, Mathf.Lerp(-30.46f, -27.775f, elapsed / duration));
                yield return null;
                elapsed += Time.deltaTime;
             }
@@ -402,8 +418,8 @@ public class LibraryAnomalies : MonoBehaviour {
 
             duration = .15f;
 
-            while (elapsed < duration) {
-               ObjectMovement[2].transform.localPosition = new Vector3(-0.1682601f, Mathf.Lerp(To, From, elapsed / duration), -29.279f);
+            while (ObjectMovement[2].transform.localPosition.y < 5.019f) {
+               ObjectMovement[2].transform.localPosition = new Vector3(-0.1682601f, Mathf.Lerp(0.24f, 5.019f, elapsed / duration), -29.279f);
                //ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(0, -21.163f, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
@@ -413,8 +429,8 @@ public class LibraryAnomalies : MonoBehaviour {
 
             duration = .15f;
 
-            while (elapsed < duration) {
-               ObjectMovement[3].transform.localPosition = new Vector3(-6.017f, Mathf.Lerp(To, From, elapsed / duration), -29.279f);
+            while (ObjectMovement[3].transform.localPosition.y < 5.019f) {
+               ObjectMovement[3].transform.localPosition = new Vector3(-6.017f, Mathf.Lerp(0.24f, 5.019f, elapsed / duration), -29.279f);
                //ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(0, -21.163f, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
@@ -480,15 +496,15 @@ public class LibraryAnomalies : MonoBehaviour {
       if (AbyssCor != null) {
          StopCoroutine(AbyssCor);
       }
-      AbyssCor = StartCoroutine(AbyssGrow(Abyss.transform.localScale));
+      AbyssCor = StartCoroutine(AbyssShrink(Abyss.transform.localScale));
    }
 
    public IEnumerator AbyssGrow (Vector3 From) {
-      Debug.Log(From);
+      //Debug.Log(From);
       var duration = 20f;
       var elapsed = 0f;
-      Vector3 To = new Vector3(21.29362f, 0.01043047f, 21.29363f);
-      while (Abyss.transform.localScale.x < 23.41538f) {
+      Vector3 To = new Vector3(14.7885f, 0.002270002f, 14.7885f);
+      while (elapsed < duration) {
          Abyss.transform.localScale = Vector3.Lerp(From, To, elapsed / duration);
          //Debug.Log(Abyss.transform.localScale);
          yield return null;
@@ -501,12 +517,13 @@ public class LibraryAnomalies : MonoBehaviour {
       var duration = .1f;
       var elapsed = 0f;
       Vector3 To = new Vector3(0.1095824f, 0.002272631f, 0.1095824f);
-      while (Abyss.transform.localScale.x < 23.41538f) {
+      while (elapsed < duration) {
          Abyss.transform.localScale = Vector3.Lerp(From, To, elapsed / duration);
          //Debug.Log(Abyss.transform.localScale);
          yield return null;
          elapsed += Time.deltaTime;
       }
+      Abyss.SetActive(false);
    }
 
    #endregion

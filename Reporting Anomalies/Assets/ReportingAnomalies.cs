@@ -14,6 +14,12 @@ public class ReportingAnomalies : MonoBehaviour {
    public KMBombInfo Bomb;
    public KMAudio Audio;
 
+   public static string[] ignoredModules = null;
+
+   public GameObject NotMod;
+
+   public AudioSource WarningSoundSystem;
+
    public KMSelectable LeftButton;
    public KMSelectable ReportButton;
    public KMSelectable RightButton;
@@ -22,6 +28,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public Text WarningT;
 
    public GameObject PleaseStandBy;
+   public GameObject FlashingWarning;
 
    public KMSelectable[] AnomalousButtons;
    public KMSelectable[] RoomSelectionButtons;
@@ -39,14 +46,18 @@ public class ReportingAnomalies : MonoBehaviour {
    public GameObject Screen;
    public TextMesh NowViewingText;
    string[] RoomNames = { "bedroom", "dungeon", "living room"};
-   public BedroomAnomalies Yeah;
+   public BedroomAnomalies Bedr;
    public LibraryAnomalies Libr;
+   public LivingRoomAnomalies Livi;
    public int BrokenCam = -1;
 
    public int RoomLocation = -1;
    public int AnomalyType = -1;
 
    public int ActiveAnomalies;
+
+   bool FirstTimeThreeAnomalies;
+   bool PlayingIntro;
 
    string[] IntroText = {
       "ATTENTION EMPLOYEE",
@@ -55,7 +66,17 @@ public class ReportingAnomalies : MonoBehaviour {
       "FILE AN ANOMALY REPORT ASAP WHEN YOU NOTICE SOMETHING HAS CHANGED"
    };
 
+   string[] EmergencyText = {
+      "THIS IS AN EMERGENCY WARNING!",
+      "WE ARE RECEIVING REPORTS OF MULTIPLE ACTIVE ANOMALIES IN YOUR AREA",
+      "PLEASE LOCATE THE ANOMALIES AND SEND REPORTS ASAP"
+   };
+
    bool Filing;
+
+   //Boss mod shit
+   int ModCount = 8008135;
+   bool WaitForModCount;
 
    string WrongText1 = "No anomaly of type ";
    string[] AnomalyTypesStr = { "intruder", "extra object", "object disappearance", "light anomaly", "door opening", "camera malfunction", "object movement", "painting anomaly", "abyss presence"};
@@ -64,16 +85,35 @@ public class ReportingAnomalies : MonoBehaviour {
 
    public int CameraPos;
 
+   public static bool FirstRAPresent;
+   bool CanModuleOperate = true;
+
+   int AnomalyRNG;
+
    //Coroutine PSBScreen;
+   Coroutine Flash;
 
    static int ModuleIdCounter = 1;
    public int ModuleId;
    int SolveCount;
    private bool ModuleSolved;
+   private static bool ModuleSolvedStatic;
 
    void Awake () {
       ModuleId = ModuleIdCounter++;
-      
+
+      GetComponent<KMBombInfo>().OnBombExploded += Exploded;
+
+      if (FirstRAPresent) {
+         Destroy(NotMod);//Prevents a lot of lag if I have only one.
+         CanModuleOperate = false;
+         Menu.SetActive(false);
+         ReportButton.gameObject.SetActive(false);
+      }
+      FirstRAPresent = true;
+
+      WarningSystem.SetActive(false);
+
       foreach (KMSelectable B in AnomalousButtons) {
           B.OnInteract += delegate () { AnomButtPress(B); return false; };
       }
@@ -90,6 +130,69 @@ public class ReportingAnomalies : MonoBehaviour {
       BackButton.OnInteract += delegate () { CloseMenu(); return false; };
       SendButton.OnInteract += delegate () { FileReport(); return false; };
 
+      WarningSystem.SetActive(false);
+
+      if (ignoredModules == null) {
+         ignoredModules = GetComponent<KMBossModule>().GetIgnoredModules("Reporting Anomalies", new string[] {
+                "14",
+                "42",
+                "501",
+                "A>N<D",
+                "Bamboozling Time Keeper",
+                "Black Arrows",
+                "Brainf---",
+                "The Board Walk",
+                "Busy Beaver",
+                "Don't Touch Anything",
+                "Floor Lights",
+                "Forget Any Color",
+                "Forget Enigma",
+                "Forget Ligma",
+                "Forget Everything",
+                "Forget Infinity",
+                "Forget It Not",
+                "Forget Maze Not",
+                "Forget Me Later",
+                "Forget Me Not",
+                "Forget Perspective",
+                "Forget The Colors",
+                "Forget Them All",
+                "Forget This",
+                "Forget Us Not",
+                "Iconic",
+                "Keypad Directionality",
+                "Kugelblitz",
+                "Multitask",
+                "OmegaDestroyer",
+                "OmegaForest",
+                "Organization",
+                "Password Destroyer",
+                "Purgatory",
+                "Reporting Anomalies",
+                "RPS Judging",
+                "Security Council",
+                "Shoddy Chess",
+                "Simon Forgets",
+                "Simon's Stages",
+                "Souvenir",
+                "Speech Jammer",
+                "Tallordered Keys",
+                "The Time Keeper",
+                "Timing is Everything",
+                "The Troll",
+                "Turn The Key",
+                "The Twin",
+                "Übermodule",
+                "Ultimate Custom Night",
+                "The Very Annoying Button",
+                "Whiteout"
+            });
+         }
+      }
+
+   void Exploded () {
+      FirstRAPresent = false;
+      ModuleSolved = false;
    }
 
    void AnomButtPress (KMSelectable B) {
@@ -117,20 +220,29 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    void Start () {
-
+      WaitForModCount = true;
+      if (!CanModuleOperate) {
+         return;
+      }
+      NotMod.transform.localScale = new Vector3((float) ((1 / NotMod.transform.lossyScale.x) - .2), (float) ((1 / NotMod.transform.lossyScale.y) - .2), (float) ((1 / NotMod.transform.lossyScale.z) - .2));
+      AnomalyRNG = Rnd.Range(25, 33);
+      Debug.LogFormat("[Reporting Anomalies #{0}] Anomalies have a {1}% chance of appearing.", ModuleId, AnomalyRNG);
       Menu.SetActive(false);
       StartCoroutine(StartAnim());
-      StartCoroutine(Test());
+      //StartCoroutine(Test());
    }
 
    IEnumerator Test () {
       yield return new WaitForSeconds(2f);
-      //Yeah.CameraInit();
-      //Yeah.MoveInit();
+      Bedr.IntruderInit();
    }
 
    public void LogAnomalies (string AType, string RType) {
       Debug.LogFormat("[Reporting Anomalies #{0}] Creating a(n) {1} Anomaly in {2} at solve #{3}.", ModuleId, AType, RType, SolveCount);
+   }
+
+   public void LogAnomalies (string SubType) {
+      Debug.LogFormat("[Reporting Anomalies #{0}] Subtype: {1}.", ModuleId, SubType);
    }
 
    void OpenMenu () {
@@ -158,7 +270,7 @@ public class ReportingAnomalies : MonoBehaviour {
       }
       CloseMenu();
       StartCoroutine(WaitForAnomalousReport());
-      //Debug.Log(Yeah.ActiveAnomalies[AnomalyType]);
+      //Debug.Log(Bedr.ActiveAnomalies[AnomalyType]);
       
    }
 
@@ -174,12 +286,12 @@ public class ReportingAnomalies : MonoBehaviour {
       ReportPending.text = "";
       switch (RoomLocation) {
          case 0:
-            if (Yeah.ActiveAnomalies[AnomalyType]) {
+            if (Bedr.ActiveAnomalies[AnomalyType]) {
                StartCoroutine(FixingScreen());
                while (PleaseStandBy.activeSelf) {
                   yield return null;
                }
-               Yeah.CheckFix();
+               Bedr.CheckFix();
             }
             else {
                StartCoroutine(WrongAnomaly());
@@ -197,6 +309,18 @@ public class ReportingAnomalies : MonoBehaviour {
                StartCoroutine(WrongAnomaly());
             }
             break;
+         case 2:
+            if (Livi.ActiveAnomalies[AnomalyType]) {
+               StartCoroutine(FixingScreen());
+               while (PleaseStandBy.activeSelf) {
+                  yield return null;
+               }
+               Livi.CheckFix();
+            }
+            else {
+               StartCoroutine(WrongAnomaly());
+            }
+            break;
          default:
             break;
       }
@@ -206,6 +330,7 @@ public class ReportingAnomalies : MonoBehaviour {
       PleaseStandBy.SetActive(true);
       Audio.PlaySoundAtTransform("Fixing", transform);
       yield return new WaitForSeconds(1.368f);
+      Filing = false;
       PleaseStandBy.SetActive(false);
    }
 
@@ -233,9 +358,11 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    IEnumerator StartAnim () {
+      PlayingIntro = true;
       yield return new WaitForSeconds(3f);
+      Flash = StartCoroutine(FlipWarningState());
       WarningSystem.SetActive(true);
-      Audio.PlaySoundAtTransform("Warning Noise", transform);
+      WarningSoundSystem.Play();
       yield return new WaitForSeconds(2f);
       for (int j = 0; j < 4; j++) {
          for (int i = 0; i < IntroText[j].Length; i++) {
@@ -246,6 +373,9 @@ public class ReportingAnomalies : MonoBehaviour {
          WarningT.text = "";
       }
       WarningSystem.SetActive(false);
+      WarningSoundSystem.Stop();
+      PlayingIntro = false;
+      StopCoroutine(Flash);
    }
 
    void LeftPress () {
@@ -270,6 +400,103 @@ public class ReportingAnomalies : MonoBehaviour {
       }
       Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
       NowViewingText.text = "Now viewing: " + RoomNames[CameraPos];
+   }
+
+   void AnomalyInit () {
+      switch (Rnd.Range(0, 3)) {
+         case 0:
+            Bedr.ChooseAnomaly();
+            break;
+         case 1:
+            Libr.ChooseAnomaly();
+            break;
+         case 2:
+            Livi.ChooseAnomaly();
+            break;
+      }
+   }
+
+   IEnumerator FlipWarningState () {
+      while (true) {
+         yield return new WaitForSeconds(1.5f);
+         FlashingWarning.SetActive(!FlashingWarning.activeSelf);
+      }
+   }
+
+   IEnumerator Warning () {
+      WarningSystem.SetActive(true);
+      Flash = StartCoroutine(FlipWarningState());
+      WarningSoundSystem.Play();
+      yield return new WaitForSeconds(2f);
+      for (int j = 0; j < 3; j++) {
+         for (int i = 0; i < EmergencyText[j].Length; i++) {
+            WarningT.text += EmergencyText[j][i].ToString();
+            yield return new WaitForSeconds(.08f);
+         }
+         yield return new WaitForSeconds(1f);
+         WarningT.text = "";
+      }
+      StopCoroutine(Flash);
+      WarningSystem.SetActive(false);
+      WarningSoundSystem.Stop();
+   }
+
+   public void Solve () {
+      GetComponent<KMBombModule>().HandlePass();
+      ModuleSolved = true;
+      ModuleSolvedStatic = true;
+   }
+
+   public void Strike () {
+      GetComponent<KMBombModule>().HandleStrike();
+   }
+
+   void Update () {
+      if (ModuleSolved || !WaitForModCount) {
+         return;
+      }
+
+      if (ModuleSolvedStatic) {
+         Solve();
+      }
+
+      if (!CanModuleOperate) { //Separate to prevent solve method from happening like a billion times;
+         return;
+      }
+
+      int Ignored = 0;
+      for (int i = 0; i < Bomb.GetSolvableModuleNames().Count(); i++) {
+         if (ignoredModules.Contains(Bomb.GetSolvableModuleNames()[i])) {
+            Ignored++;
+         }
+      }
+
+      ModCount = Bomb.GetSolvableModuleNames().Count() - Ignored;
+
+      //Debug.Log(ModCount);
+
+      if (SolveCount != Bomb.GetSolvedModuleNames().Count()) {
+         while (SolveCount != Bomb.GetSolvedModuleNames().Count()) { //In case multiple modules solve simultaneously
+            SolveCount++;
+            if (ActiveAnomalies >= 4) {
+               Strike();
+            }
+         }
+         if (Rnd.Range(0, 99) <= AnomalyRNG) {
+            AnomalyInit();
+         }
+      }
+      if (ActiveAnomalies == 3 && !FirstTimeThreeAnomalies) {
+         if (!PlayingIntro) {
+            StartCoroutine(Warning());
+         }
+         FirstTimeThreeAnomalies = true;
+      }
+      if (SolveCount >= ModCount && ActiveAnomalies == 0) {
+         //Debug.Log(SolveCount);
+         //Debug.Log(ModCount);
+         Solve();
+      }
    }
 
 #pragma warning disable 414

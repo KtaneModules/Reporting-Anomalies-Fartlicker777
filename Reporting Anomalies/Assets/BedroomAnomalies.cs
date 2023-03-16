@@ -10,6 +10,8 @@ public class BedroomAnomalies : MonoBehaviour {
    public ReportingAnomalies Mod;
 
    public GameObject Intruder;
+   public AudioClip HarHar;
+
    public GameObject[] ExtraObjects;
    int ExtraObj;
 
@@ -80,45 +82,44 @@ public class BedroomAnomalies : MonoBehaviour {
       int RandomAnomaly = Rnd.Range(0, 9);
       do {
          RandomAnomaly = Rnd.Range(0, 9);
-      } while (ActiveAnomalies[RandomAnomaly]);
+      } while (ActiveAnomalies[RandomAnomaly] || (Mod.BrokenCam != -1 && RandomAnomaly == 5));
 
       ActiveAnomalies[RandomAnomaly] = true;
 
+      string[] ATypes = { "Intruder", "Extra Object", "Object Disappearance", "Light", "Door Opening", "Camera Malfunction", "Object Movement", "Painting", "Abyss Presence" };
+
+      Mod.LogAnomalies(ATypes[RandomAnomaly], "Bedroom");
+
       switch (RandomAnomaly) {
          case 0:
-            Mod.LogAnomalies("Intruder", "Bedroom");
             IntruderInit();
             break;
          case 1:
-            Mod.LogAnomalies("Extra Object", "Bedroom");
             ExtraInit();
+            Mod.LogAnomalies(new string[] { "Trash Bin", "Newton's Cradle"}[ExtraObj]);
             break;
          case 2:
-            Mod.LogAnomalies("Object Disappearance", "Bedroom");
             DisappearInit();
+            Mod.LogAnomalies(new string[] { "Alarm Clock", "Camera", "Book", "Headphones", "Pillow", "Left Speaker", "Right Speaker", "Monitor", "Keyboard", "Computer", "Mouse" }[DisObj]);
             break;
          case 3:
-            Mod.LogAnomalies("Light", "Bedroom");
             LightInit();
             break;
          case 4:
-            Mod.LogAnomalies("Door Opening", "Bedroom");
             DoorInit();
             break;
          case 5:
-            Mod.LogAnomalies("Camera Malfunction", "Bedroom");
             CameraInit();
             break;
          case 6:
-            Mod.LogAnomalies("Object Movement", "Bedroom");
             MoveInit();
+            Mod.LogAnomalies(new string[] { "Chair", "PC", "Bed"}[MovedObject]);
             break;
          case 7:
-            Mod.LogAnomalies("Painting", "Bedroom");
             PaintingInit();
+            Mod.LogAnomalies(new string[] { "tsirotoM thgindiM", "KILL", "Green Day" }[TypeOfPainting]);
             break;
          case 8:
-            Mod.LogAnomalies("Abyss Presence", "Bedroom");
             AbyssInit();
             break;
       }
@@ -129,6 +130,7 @@ public class BedroomAnomalies : MonoBehaviour {
    public void IntruderInit () {
       Intruder.SetActive(true);
       IntruderCor = StartCoroutine(Fabore());
+      Music.clip = HarHar;
       Music.Play();
    }
 
@@ -398,7 +400,7 @@ public class BedroomAnomalies : MonoBehaviour {
       if (AbyssCor != null) {
          StopCoroutine(AbyssCor);
       }
-      AbyssCor = StartCoroutine(AbyssGrow(Abyss.transform.localScale));
+      AbyssCor = StartCoroutine(AbyssShrink(Abyss.transform.localScale));
    }
 
    public IEnumerator AbyssGrow (Vector3 From) {
@@ -406,7 +408,7 @@ public class BedroomAnomalies : MonoBehaviour {
       var duration = 20f;
       var elapsed = 0f;
       Vector3 To = new Vector3(23.41538f, 0.002272631f, 23.41538f);
-      while (Abyss.transform.localScale.x < 23.41538f) {
+      while (elapsed < duration) {
          Abyss.transform.localScale = Vector3.Lerp(From, To, elapsed / duration);
          //Debug.Log(Abyss.transform.localScale);
          yield return null;
@@ -416,10 +418,10 @@ public class BedroomAnomalies : MonoBehaviour {
 
    public IEnumerator AbyssShrink (Vector3 From) {
       Debug.Log(From);
-      var duration = 20f;
+      var duration = .1f;
       var elapsed = 0f;
       Vector3 To = new Vector3(0.1095824f, 0.002272631f, 0.1095824f);
-      while (Abyss.transform.localScale.x < 23.41538f) {
+      while (elapsed < duration) {
          Abyss.transform.localScale = Vector3.Lerp(From, To, elapsed / duration);
          //Debug.Log(Abyss.transform.localScale);
          yield return null;
