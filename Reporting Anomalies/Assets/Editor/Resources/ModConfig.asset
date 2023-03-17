@@ -17,4 +17,4 @@ MonoBehaviour:
   description: shitfuck 9000
   version: 
   outputFolder: build
-  previewImage: {fileID: 0}
+  previewImage: {fileID: 2800000, guid: 8aa2a16f16fb3da4db81e5aaa18225bb, type: 3}

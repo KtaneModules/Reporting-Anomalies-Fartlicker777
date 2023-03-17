@@ -246,7 +246,7 @@ public class LibraryAnomalies : MonoBehaviour {
       //Debug.Log("Pemus");
       var duration = .25f;
       var elapsed = 0f;
-      while (elapsed < duration) {
+      while (Door.transform.localEulerAngles.y < 180f) {
          Door.transform.localEulerAngles = new Vector3(270, Mathf.Lerp(90f, 180f, elapsed / duration), 0);
          //Door.transform.localPosition = new Vector3(-0.01723932f, -0.03f, Mathf.Lerp(-33.824f, -33.824f, elapsed / duration)); //-0.01723932, -0.02999997, -33.824
          yield return null;
@@ -257,7 +257,7 @@ public class LibraryAnomalies : MonoBehaviour {
    IEnumerator ResetDoor () {
       var duration = .25f;
       var elapsed = 0f;
-      while (elapsed < duration) {
+      while (Door.transform.localEulerAngles.y > 90f) {
          Door.transform.localEulerAngles = new Vector3(270, Mathf.Lerp(180f, 90f, elapsed / duration), 0);
          yield return null;
          elapsed += Time.deltaTime;
@@ -505,7 +505,7 @@ public class LibraryAnomalies : MonoBehaviour {
       var duration = 20f;
       var elapsed = 0f;
       Vector3 To = new Vector3(14.7885f, 0.002270002f, 14.7885f);
-      while (elapsed < duration) {
+      while (Abyss.transform.localScale.x < 14.7885f) {
          Abyss.transform.localScale = Vector3.Lerp(From, To, elapsed / duration);
          //Debug.Log(Abyss.transform.localScale);
          yield return null;
@@ -518,7 +518,7 @@ public class LibraryAnomalies : MonoBehaviour {
       var duration = .1f;
       var elapsed = 0f;
       Vector3 To = new Vector3(0.1095824f, 0.002272631f, 0.1095824f);
-      while (elapsed < duration) {
+      while (Abyss.transform.localScale.x > 0.1095824f) {
          Abyss.transform.localScale = Vector3.Lerp(From, To, elapsed / duration);
          //Debug.Log(Abyss.transform.localScale);
          yield return null;

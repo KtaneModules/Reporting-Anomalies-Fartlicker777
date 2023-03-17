@@ -103,8 +103,6 @@ public class ReportingAnomalies : MonoBehaviour {
    void Awake () {
       ModuleId = ModuleIdCounter++;
 
-      GetComponent<KMBombInfo>().OnBombExploded += Exploded;
-
       if (FirstRAPresent) {
          Destroy(NotMod);//Prevents a lot of lag if I have only one.
          CanModuleOperate = false;
@@ -191,9 +189,9 @@ public class ReportingAnomalies : MonoBehaviour {
          }
       }
 
-   void Exploded () {
+   void OnDestroy () {
       FirstRAPresent = false;
-      ModuleSolved = false;
+      ModuleSolvedStatic = false;
       StaticCam = -1;
    }
 
@@ -293,6 +291,10 @@ public class ReportingAnomalies : MonoBehaviour {
                while (PleaseStandBy.activeSelf) {
                   yield return null;
                }
+               if (AnomalyType == 5) {
+                  BrokenCam = -1;
+                  StaticCam = -1;
+               }
                Bedr.CheckFix();
             }
             else {
@@ -305,6 +307,10 @@ public class ReportingAnomalies : MonoBehaviour {
                while (PleaseStandBy.activeSelf) {
                   yield return null;
                }
+               if (AnomalyType == 5) {
+                  BrokenCam = -1;
+                  StaticCam = -1;
+               }
                Libr.CheckFix();
             }
             else {
@@ -316,6 +322,10 @@ public class ReportingAnomalies : MonoBehaviour {
                StartCoroutine(FixingScreen());
                while (PleaseStandBy.activeSelf) {
                   yield return null;
+               }
+               if (AnomalyType == 5) {
+                  BrokenCam = -1;
+                  StaticCam = -1;
                }
                Livi.CheckFix();
             }

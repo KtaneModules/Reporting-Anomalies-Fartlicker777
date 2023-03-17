@@ -230,7 +230,7 @@ public class BedroomAnomalies : MonoBehaviour {
       //Debug.Log("Pemus");
       var duration = .25f;
       var elapsed = 0f;
-      while (elapsed < duration) {
+      while (Door.transform.localEulerAngles.y < 130f) {
          Door.transform.localEulerAngles = new Vector3(270, Mathf.Lerp(90, 130, elapsed / duration), 0);
          yield return null;
          elapsed += Time.deltaTime;
@@ -240,7 +240,7 @@ public class BedroomAnomalies : MonoBehaviour {
    IEnumerator ResetDoor () {
       var duration = .25f;
       var elapsed = 0f;
-      while (elapsed < duration) {
+      while (Door.transform.localEulerAngles.y > 90f) {
          Door.transform.localEulerAngles = new Vector3(270, Mathf.Lerp(130, 90, elapsed / duration), 0);
          yield return null;
          elapsed += Time.deltaTime;
