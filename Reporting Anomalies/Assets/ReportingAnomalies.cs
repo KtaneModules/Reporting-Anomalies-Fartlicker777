@@ -18,6 +18,8 @@ public class ReportingAnomalies : MonoBehaviour {
 
    public GameObject NotMod;
 
+   public GameObject[] Rooms;
+
    public AudioSource WarningSoundSystem;
 
    public KMSelectable LeftButton;
@@ -45,7 +47,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public Material[] CameraMats;
    public GameObject Screen;
    public TextMesh NowViewingText;
-   string[] RoomNames = { "bedroom", "dungeon", "living room"};
+   string[] RoomNames = { "bedroom", "library", "living room"};
    public BedroomAnomalies Bedr;
    public LibraryAnomalies Libr;
    public LivingRoomAnomalies Livi;
@@ -99,6 +101,8 @@ public class ReportingAnomalies : MonoBehaviour {
    int SolveCount;
    private bool ModuleSolved;
    private static bool ModuleSolvedStatic;
+
+   static int[] ViewingRooms = new int[3];
 
    void Awake () {
       ModuleId = ModuleIdCounter++;
@@ -189,10 +193,67 @@ public class ReportingAnomalies : MonoBehaviour {
          }
       }
 
+   void Start () {
+      WaitForModCount = true;
+      ViewingRooms[0]++;
+      if (!CanModuleOperate) {
+         return;
+      }
+      NotMod.transform.localScale = new Vector3((float) ((1 / NotMod.transform.lossyScale.x) - .2), (float) ((1 / NotMod.transform.lossyScale.y) - .2), (float) ((1 / NotMod.transform.lossyScale.z) - .2));
+      AnomalyRNG = Rnd.Range(30, 41);
+      Debug.LogFormat("[Reporting Anomalies #{0}] Anomalies have a {1}% chance of appearing.", ModuleId, AnomalyRNG);
+      Menu.SetActive(false);
+      DeloadRooms();
+      StartCoroutine(StartAnim());
+      //StartCoroutine(Test());
+   }
+
+   #region Reset Things
+
    void OnDestroy () {
       FirstRAPresent = false;
       ModuleSolvedStatic = false;
+      ViewingRooms = new int[3];
       StaticCam = -1;
+   }
+
+   void Reset () {
+      AnomalyType = -1;
+      RoomLocation = -1;
+   }
+
+   #endregion
+
+   #region Buttons
+
+   void LeftPress () {
+      Audio.PlaySoundAtTransform("Tick", LeftButton.transform);
+      ViewingRooms[CameraPos]--;
+      CameraPos--;
+      CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
+      ViewingRooms[CameraPos]++;
+      if (BrokenCam == CameraPos) {
+         CameraPos--;
+         CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
+      }
+      Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
+      NowViewingText.text = "Now viewing: " + RoomNames[CameraPos];
+      DeloadRooms();
+   }
+
+   void RightPress () {
+      Audio.PlaySoundAtTransform("Tick", RightButton.transform);
+      ViewingRooms[CameraPos]--;
+      CameraPos++;
+      CameraPos %= CameraMats.Length;
+      ViewingRooms[CameraPos]++;
+      if (BrokenCam == CameraPos) {
+         CameraPos++;
+         CameraPos %= CameraMats.Length;
+      }
+      Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
+      NowViewingText.text = "Now viewing: " + RoomNames[CameraPos];
+      DeloadRooms();
    }
 
    void AnomButtPress (KMSelectable B) {
@@ -219,30 +280,24 @@ public class ReportingAnomalies : MonoBehaviour {
       }
    }
 
-   void Start () {
-      WaitForModCount = true;
+
+   void DeloadRooms () {
       if (!CanModuleOperate) {
          return;
       }
-      NotMod.transform.localScale = new Vector3((float) ((1 / NotMod.transform.lossyScale.x) - .2), (float) ((1 / NotMod.transform.lossyScale.y) - .2), (float) ((1 / NotMod.transform.lossyScale.z) - .2));
-      AnomalyRNG = Rnd.Range(25, 33);
-      Debug.LogFormat("[Reporting Anomalies #{0}] Anomalies have a {1}% chance of appearing.", ModuleId, AnomalyRNG);
-      Menu.SetActive(false);
-      StartCoroutine(StartAnim());
-      //StartCoroutine(Test());
-   }
+      Debug.Log("----------");
+      Debug.Log(ViewingRooms[0]);
+      Debug.Log(ViewingRooms[1]);
+      Debug.Log(ViewingRooms[2]);
 
-   IEnumerator Test () {
-      yield return new WaitForSeconds(2f);
-      Bedr.IntruderInit();
-   }
-
-   public void LogAnomalies (string AType, string RType) {
-      Debug.LogFormat("[Reporting Anomalies #{0}] Creating a(n) {1} Anomaly in {2} at solve #{3}.", ModuleId, AType, RType, SolveCount);
-   }
-
-   public void LogAnomalies (string SubType) {
-      Debug.LogFormat("[Reporting Anomalies #{0}] Subtype: {1}.", ModuleId, SubType);
+      for (int i = 0; i < Rooms.Length; i++) {
+         if (ViewingRooms[i] == 0) {
+            Rooms[i].SetActive(false);
+         }
+         else {
+            Rooms[i].SetActive(true);
+         }
+      }
    }
 
    void OpenMenu () {
@@ -271,8 +326,28 @@ public class ReportingAnomalies : MonoBehaviour {
       CloseMenu();
       StartCoroutine(WaitForAnomalousReport());
       //Debug.Log(Bedr.ActiveAnomalies[AnomalyType]);
-      
    }
+
+   #endregion
+
+   IEnumerator Test () { //If I want to test an anomaly/anything for a bug
+      yield return new WaitForSeconds(2f);
+      Bedr.IntruderInit();
+   }
+
+   #region Logging
+
+   public void LogAnomalies (string AType, string RType) {
+      Debug.LogFormat("[Reporting Anomalies #{0}] Creating a(n) {1} Anomaly in {2} at solve #{3}.", ModuleId, AType, RType, SolveCount);
+   }
+
+   public void LogAnomalies (string SubType) {
+      Debug.LogFormat("[Reporting Anomalies #{0}] Subtype: {1}.", ModuleId, SubType);
+   }
+
+   #endregion
+
+   #region Animations
 
    IEnumerator WaitForAnomalousReport () {
       for (int j = 0; j < 2; j++) {
@@ -364,11 +439,6 @@ public class ReportingAnomalies : MonoBehaviour {
       Reset();
    }
 
-   void Reset () {
-      AnomalyType = -1;
-      RoomLocation = -1;
-   }
-
    IEnumerator StartAnim () {
       PlayingIntro = true;
       yield return new WaitForSeconds(3f);
@@ -388,45 +458,6 @@ public class ReportingAnomalies : MonoBehaviour {
       WarningSoundSystem.Stop();
       PlayingIntro = false;
       StopCoroutine(Flash);
-   }
-
-   void LeftPress () {
-      Audio.PlaySoundAtTransform("Tick", LeftButton.transform);
-      CameraPos--;
-      CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
-      if (BrokenCam == CameraPos) {
-         CameraPos--;
-         CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
-      }
-      Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
-      NowViewingText.text = "Now viewing: " + RoomNames[CameraPos];
-   }
-
-   void RightPress () {
-      Audio.PlaySoundAtTransform("Tick", RightButton.transform);
-      CameraPos++;
-      CameraPos %= CameraMats.Length;
-      if (BrokenCam == CameraPos) {
-         CameraPos++;
-         CameraPos %= CameraMats.Length;
-      }
-      Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
-      NowViewingText.text = "Now viewing: " + RoomNames[CameraPos];
-   }
-
-   void AnomalyInit () {
-      switch (Rnd.Range(0, 3)) {
-         case 0:
-            Bedr.ChooseAnomaly();
-            break;
-         case 1:
-            Libr.ChooseAnomaly();
-            break;
-         case 2:
-            Livi.ChooseAnomaly();
-            break;
-      }
-      StaticCam = BrokenCam;
    }
 
    IEnumerator FlipWarningState () {
@@ -452,6 +483,23 @@ public class ReportingAnomalies : MonoBehaviour {
       StopCoroutine(Flash);
       WarningSystem.SetActive(false);
       WarningSoundSystem.Stop();
+   }
+
+   #endregion
+
+   void AnomalyInit () {
+      switch (Rnd.Range(0, 3)) {
+         case 0:
+            Bedr.ChooseAnomaly();
+            break;
+         case 1:
+            Libr.ChooseAnomaly();
+            break;
+         case 2:
+            Livi.ChooseAnomaly();
+            break;
+      }
+      StaticCam = BrokenCam;
    }
 
    public void Solve () {

@@ -504,8 +504,8 @@ public class LibraryAnomalies : MonoBehaviour {
       //Debug.Log(From);
       var duration = 20f;
       var elapsed = 0f;
-      Vector3 To = new Vector3(14.7885f, 0.002270002f, 14.7885f);
-      while (Abyss.transform.localScale.x < 14.7885f) {
+      Vector3 To = new Vector3(16f, 0.002270002f, 16f);
+      while (Abyss.transform.localScale.x < 16f) {
          Abyss.transform.localScale = Vector3.Lerp(From, To, elapsed / duration);
          //Debug.Log(Abyss.transform.localScale);
          yield return null;

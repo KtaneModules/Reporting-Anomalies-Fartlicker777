@@ -278,7 +278,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
       var elapsed = 0f;
       switch (MovedObject) {
          case 0:
-            while (elapsed < duration) {
+            while (ObjectMovement[0].transform.localPosition.x > -2.8f) {
                ObjectMovement[0].transform.localPosition = new Vector3(Mathf.Lerp(-2.532239f, -2.8f, elapsed / duration), 0, -0.26194f);
                yield return null;
                elapsed += Time.deltaTime;
@@ -294,7 +294,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
             FakeClockHand.SetActive(true);
             break;
          case 2:
-            while (elapsed < duration) {
+            while (ObjectMovement[2].transform.localPosition.z > -.4f) {
                ObjectMovement[2].transform.localPosition = new Vector3(0, 0, Mathf.Lerp(0, -.4f, elapsed / duration));
                yield return null;
                elapsed += Time.deltaTime;
@@ -312,7 +312,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
       switch (MovedObject) {
          case 0:
 
-            while (elapsed < duration) {
+            while (ObjectMovement[0].transform.localPosition.x < -2.532239f) {
                ObjectMovement[0].transform.localPosition = new Vector3(Mathf.Lerp(-2.8f, -2.532239f, elapsed / duration), 0, -0.26194f);
                yield return null;
                elapsed += Time.deltaTime;
@@ -324,7 +324,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
             FakeClockHand.SetActive(false);
             break;
          case 2:
-            while (elapsed < duration) {
+            while (ObjectMovement[2].transform.localPosition.z < 0) {
                ObjectMovement[2].transform.localPosition = new Vector3(0, 0, Mathf.Lerp(-.4f, 0, elapsed / duration));
                yield return null;
                elapsed += Time.deltaTime;
