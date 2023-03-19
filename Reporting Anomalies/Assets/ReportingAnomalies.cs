@@ -215,6 +215,7 @@ public class ReportingAnomalies : MonoBehaviour {
       ModuleSolvedStatic = false;
       ViewingRooms = new int[3];
       StaticCam = -1;
+      Cursor.visible = true;
    }
 
    void Reset () {
@@ -415,8 +416,10 @@ public class ReportingAnomalies : MonoBehaviour {
 
    IEnumerator FixingScreen () {
       PleaseStandBy.SetActive(true);
+      Cursor.visible = false;
       Audio.PlaySoundAtTransform("Fixing", transform);
       yield return new WaitForSeconds(1.368f);
+      Cursor.visible = true;
       Filing = false;
       PleaseStandBy.SetActive(false);
    }
