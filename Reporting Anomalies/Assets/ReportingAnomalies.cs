@@ -569,11 +569,23 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
 #pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
+   private readonly string TwitchHelpMessage = @"Use !{0} view room Bedroom/Library/Living_Room to look at that room. Use !{0} report X in Y to report that specific anomaly in that specific room.";
 #pragma warning restore 414
 
    IEnumerator ProcessTwitchCommand (string Command) {
       yield return null;
+      string[] ReportTypes = AnomalyTypesStr;
+      string[] RoomTypes = { "BEDROOM", "LIBRARY", "LIVING_ROOM" };
+      for (int i = 0; i < ReportTypes.Length; i++) {
+         AnomalyTypesStr[i] = AnomalyTypesStr[i].ToUpper();
+      }
+      string[] Parameters = Command.Trim().ToUpper().Split(' ');
+      if ((Parameters[0] != "VIEW" && Parameters[0] != "REPORT") || (Parameters.Length != 2 && Parameters.Length != 4)) {
+         yield return "sendtochaterror I don't understand!";
+      }
+      if (ReportTypes.Contains(Parameters[1])) {
+
+      }
    }
 
    IEnumerator TwitchHandleForcedSolve () {
