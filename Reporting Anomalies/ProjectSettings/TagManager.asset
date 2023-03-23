@@ -42,3 +42,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Mushroom
+    uniqueID: 555315143
+    locked: 0
+  - name: Cheese
+    uniqueID: 2002076881
+    locked: 0
+  - name: Tomato
+    uniqueID: 1332512391
+    locked: 0
+  - name: Sausage
+    uniqueID: 3539985441
+    locked: 0
+  - name: Pineapple
+    uniqueID: 3195499197
+    locked: 0

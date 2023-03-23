@@ -69,6 +69,13 @@ public class ReportingAnomalies : MonoBehaviour {
       "FILE AN ANOMALY REPORT ASAP WHEN YOU NOTICE SOMETHING HAS CHANGED"
    };
 
+   string[] AltIntroText = {
+      "Warning! Warning!",
+      "Differences are being spotted in the Unity House!",
+      ">m<",
+      "Find all of them and we can ice cream after school!!!!!!!"
+   };
+
    string[] EmergencyText = {
       "THIS IS AN EMERGENCY WARNING!",
       "WE ARE RECEIVING REPORTS OF MULTIPLE ACTIVE ANOMALIES IN YOUR AREA",
@@ -449,14 +456,27 @@ public class ReportingAnomalies : MonoBehaviour {
       WarningSystem.SetActive(true);
       WarningSoundSystem.Play();
       yield return new WaitForSeconds(2f);
-      for (int j = 0; j < 4; j++) {
-         for (int i = 0; i < IntroText[j].Length; i++) {
-            WarningT.text += IntroText[j][i].ToString();
-            yield return new WaitForSeconds(.08f);
+      if (Rnd.Range(0, 20) == 0) {
+         for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < AltIntroText[j].Length; i++) {
+               WarningT.text += AltIntroText[j][i].ToString();
+               yield return new WaitForSeconds(.08f);
+            }
+            yield return new WaitForSeconds(1f);
+            WarningT.text = "";
          }
-         yield return new WaitForSeconds(1f);
-         WarningT.text = "";
       }
+      else {
+         for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < IntroText[j].Length; i++) {
+               WarningT.text += IntroText[j][i].ToString();
+               yield return new WaitForSeconds(.08f);
+            }
+            yield return new WaitForSeconds(1f);
+            WarningT.text = "";
+         }
+      }
+      
       WarningSystem.SetActive(false);
       WarningSoundSystem.Stop();
       PlayingIntro = false;
@@ -569,7 +589,7 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
 #pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} view room Bedroom/Library/Living_Room to look at that room. Use !{0} report X in Y to report that specific anomaly in that specific room.";
+   private readonly string TwitchHelpMessage = @"Use !{0} view room Bedroom/Library/Living_Room to look at that room. Use !{0} report X in Y to report that specific anomaly in that specific room. NOT CURRENTLY WORKING.";
 #pragma warning restore 414
 
    IEnumerator ProcessTwitchCommand (string Command) {
