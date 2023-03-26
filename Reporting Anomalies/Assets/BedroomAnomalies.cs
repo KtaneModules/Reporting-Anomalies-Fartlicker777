@@ -10,7 +10,6 @@ public class BedroomAnomalies : MonoBehaviour {
    public ReportingAnomalies Mod;
 
    public GameObject Intruder;
-   public AudioClip HarHar;
 
    public GameObject[] ExtraObjects;
    int ExtraObj;
@@ -130,7 +129,6 @@ public class BedroomAnomalies : MonoBehaviour {
    public void IntruderInit () {
       Intruder.SetActive(true);
       IntruderCor = StartCoroutine(Fabore());
-      Music.clip = HarHar;
       Music.Play();
    }
 
@@ -150,7 +148,6 @@ public class BedroomAnomalies : MonoBehaviour {
                Music.volume = 0;
             }
             else {
-               Music.clip = HarHar;
                Music.volume = 1;
             }
             Intruder.transform.localEulerAngles = new Vector3(270, Mathf.Lerp(0, 359, elapsed / duration), 0);

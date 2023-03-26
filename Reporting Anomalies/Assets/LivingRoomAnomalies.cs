@@ -23,7 +23,6 @@ public class LivingRoomAnomalies : MonoBehaviour {
    public ReportingAnomalies Mod;
 
    public GameObject Intruder;
-   public AudioClip TankTheme;
 
    public GameObject[] ExtraObjects;
    int ExtraObj;
@@ -138,7 +137,6 @@ public class LivingRoomAnomalies : MonoBehaviour {
 
    public void IntruderInit () {
       Intruder.SetActive(true);
-      Music.clip = TankTheme;
       IntruderCor = StartCoroutine(TankSong());
       Music.Play();
    }
@@ -156,7 +154,6 @@ public class LivingRoomAnomalies : MonoBehaviour {
             Music.volume = 0;
          }
          else {
-            Music.clip = TankTheme;
             Music.volume = .66f;
          }
          yield return null;

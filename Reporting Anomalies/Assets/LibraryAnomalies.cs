@@ -10,7 +10,6 @@ public class LibraryAnomalies : MonoBehaviour {
    public ReportingAnomalies Mod;
 
    public SpriteRenderer Intruder;
-   public AudioClip SBTheme;
 
    public Sprite[] SpaceBoyfriend;
 
@@ -151,7 +150,7 @@ public class LibraryAnomalies : MonoBehaviour {
    public void IntruderInit () {
       //Intruder.SetActive(true);
       IntruderCor = StartCoroutine(SpaceBoyfriendAnim());
-      Music.clip = SBTheme;
+      //Music.clip = SBTheme;
       //Music.volume = .25f;
       Music.Play();
    }
@@ -170,7 +169,7 @@ public class LibraryAnomalies : MonoBehaviour {
             Music.volume = 0;
          }
          else {
-            Music.clip = SBTheme;
+            //Music.clip = SBTheme;
             Music.volume = .25f;
          }
          counter++;
