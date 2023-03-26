@@ -347,9 +347,9 @@ public class ReportingAnomalies : MonoBehaviour {
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
       yield return new WaitForSeconds(5f);
       //Bedr.IntruderInit();
-      Livi.DoorInit();
+      /*Livi.DoorInit();
       yield return new WaitForSeconds(2f);
-      Livi.FixDoor();
+      Livi.FixDoor();*/
    }
 
    #region Logging
@@ -598,26 +598,45 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
 #pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} view room Bedroom/Library/Living_Room to look at that room. Use !{0} report X in Y to report that specific anomaly in that specific room. NOT CURRENTLY WORKING.";
+   private readonly string TwitchHelpMessage = @"Use !{0} left/right to switch between cameras. Use !{0} report X in Y to report that specific anomaly in that specific room. Note that underscores are used in place of spaces for anomaly and room names.";
 #pragma warning restore 414
 
    IEnumerator ProcessTwitchCommand (string Command) {
       yield return null;
-      string[] ReportTypes = AnomalyTypesStr;
-      string[] RoomTypes = { "BEDROOM", "LIBRARY", "LIVING_ROOM" };
+      string[] RoomTypes = RoomNames.ToArray();
+      string[] ReportTypes = AnomalyTypesStr.ToArray();
       for (int i = 0; i < ReportTypes.Length; i++) {
-         AnomalyTypesStr[i] = AnomalyTypesStr[i].ToUpper();
+         ReportTypes[i] = ReportTypes[i].ToUpper().Replace(" ", "_");
+         if (i < 3) { 
+            RoomTypes[i] = RoomTypes[i].ToUpper().Replace(" ", "_");
+         }
       }
       string[] Parameters = Command.Trim().ToUpper().Split(' ');
-      if ((Parameters[0] != "VIEW" && Parameters[0] != "REPORT") || (Parameters.Length != 2 && Parameters.Length != 4)) {
-         yield return "sendtochaterror I don't understand!";
+      if (Parameters.Length == 4 && Parameters[0] == "REPORT" && ReportTypes.Contains(Parameters[1]) && Parameters[2] == "IN" && RoomTypes.Contains(Parameters[3])) {
+         if (!CanModuleOperate) {
+            yield return "sendtochaterror The report feature on this module has shat itself!";
+            yield break;
+         }
+         ReportButton.OnInteract();
+         yield return new WaitForSeconds(.1f);
+         RoomSelectionButtons[Array.IndexOf(RoomTypes, Parameters[3])].OnInteract();
+         yield return new WaitForSeconds(.1f);
+         AnomalousButtons[Array.IndexOf(ReportTypes, Parameters[1])].OnInteract();
+         yield return new WaitForSeconds(.1f);
+         SendButton.OnInteract();
       }
-      if (ReportTypes.Contains(Parameters[1])) {
-
+      else if (Parameters.Length == 1 && Parameters[0] == "LEFT") {
+         LeftButton.OnInteract();
+      }
+      else if (Parameters.Length == 1 && Parameters[0] == "RIGHT") {
+         RightButton.OnInteract();
+      }
+      else {
+         yield return "sendtochaterror I don't understand!";
       }
    }
 
-   IEnumerator TwitchHandleForcedSolve () {
-      yield return null;
+   void TwitchHandleForcedSolve () {
+      Solve();
    }
 }
