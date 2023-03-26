@@ -212,7 +212,7 @@ public class ReportingAnomalies : MonoBehaviour {
       Menu.SetActive(false);
       DeloadRooms();
       StartCoroutine(StartAnim());
-      //StartCoroutine(Test());
+      StartCoroutine(Test());
    }
 
    #region Reset Things
@@ -293,10 +293,10 @@ public class ReportingAnomalies : MonoBehaviour {
       if (!CanModuleOperate) {
          return;
       }
-      Debug.Log("----------");
+      /*Debug.Log("----------");
       Debug.Log(ViewingRooms[0]);
       Debug.Log(ViewingRooms[1]);
-      Debug.Log(ViewingRooms[2]);
+      Debug.Log(ViewingRooms[2]);*/
 
       for (int i = 0; i < Rooms.Length; i++) {
          if (ViewingRooms[i] == 0) {
@@ -339,8 +339,11 @@ public class ReportingAnomalies : MonoBehaviour {
    #endregion
 
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
+      yield return new WaitForSeconds(5f);
+      //Bedr.IntruderInit();
+      Livi.DoorInit();
       yield return new WaitForSeconds(2f);
-      Bedr.IntruderInit();
+      Livi.FixDoor();
    }
 
    #region Logging

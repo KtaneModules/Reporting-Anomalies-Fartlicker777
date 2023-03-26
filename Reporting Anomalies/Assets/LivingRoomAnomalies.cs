@@ -233,7 +233,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
    IEnumerator ResetDoor () {
       var duration = .25f;
       var elapsed = 0f;
-      while (Door.transform.localEulerAngles.y < 0) {
+      while (Door.transform.localEulerAngles.y > 0) {
          Door.transform.localEulerAngles = new Vector3(270, 0, Mathf.Lerp(-87f, 0, elapsed / duration));
          yield return null;
          elapsed += Time.deltaTime;
