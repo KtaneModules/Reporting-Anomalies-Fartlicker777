@@ -133,8 +133,8 @@ public class ReportingAnomalies : MonoBehaviour {
       }
 
 
-      LeftButton.OnInteract += delegate () { LeftPress(); return false; };
-      RightButton.OnInteract += delegate () { RightPress(); return false; };
+      LeftButton.OnInteract += delegate () { Audio.PlaySoundAtTransform("Tick", LeftButton.transform); LeftPress(); return false; };
+      RightButton.OnInteract += delegate () { Audio.PlaySoundAtTransform("Tick", RightButton.transform); RightPress(); return false; };
 
       ReportButton.OnInteract += delegate () { OpenMenu(); return false; };
       BackButton.OnInteract += delegate () { CloseMenu(); return false; };
@@ -211,8 +211,14 @@ public class ReportingAnomalies : MonoBehaviour {
       Debug.LogFormat("[Reporting Anomalies #{0}] Anomalies have a {1}% chance of appearing.", ModuleId, AnomalyRNG);
       Menu.SetActive(false);
       DeloadRooms();
+      //StartCoroutine(FixMaterialForMultipleRAs());
       StartCoroutine(StartAnim());
       StartCoroutine(Test());
+   }
+
+   IEnumerator FixMaterialForMultipleRAs () {
+      LeftPress();
+      yield return new WaitForSeconds(.3f);
    }
 
    #region Reset Things
@@ -235,7 +241,7 @@ public class ReportingAnomalies : MonoBehaviour {
    #region Buttons
 
    void LeftPress () {
-      Audio.PlaySoundAtTransform("Tick", LeftButton.transform);
+      
       ViewingRooms[CameraPos]--;
       CameraPos--;
       CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
@@ -250,7 +256,7 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    void RightPress () {
-      Audio.PlaySoundAtTransform("Tick", RightButton.transform);
+      
       ViewingRooms[CameraPos]--;
       CameraPos++;
       CameraPos %= CameraMats.Length;
