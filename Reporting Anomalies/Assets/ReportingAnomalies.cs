@@ -22,6 +22,8 @@ public class ReportingAnomalies : MonoBehaviour {
 
    public AudioSource WarningSoundSystem;
 
+   public GameObject LoadingScreen; //Used so that the mod doesn't show it moving cams
+
    public KMSelectable LeftButton;
    public KMSelectable ReportButton;
    public KMSelectable RightButton;
@@ -47,7 +49,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public Material[] CameraMats;
    public GameObject Screen;
    public TextMesh NowViewingText;
-   string[] RoomNames = { "bedroom", "library", "living room"};
+   string[] RoomNames = { "bedroom", "library", "living room" };
    public BedroomAnomalies Bedr;
    public LibraryAnomalies Libr;
    public LivingRoomAnomalies Livi;
@@ -89,7 +91,7 @@ public class ReportingAnomalies : MonoBehaviour {
    bool WaitForModCount;
 
    string WrongText1 = "No anomaly of type ";
-   string[] AnomalyTypesStr = { "intruder", "extra object", "object disappearance", "light anomaly", "door opening", "camera malfunction", "object movement", "painting anomaly", "abyss presence"};
+   string[] AnomalyTypesStr = { "intruder", "extra object", "object disappearance", "light anomaly", "door opening", "camera malfunction", "object movement", "painting anomaly", "abyss presence" };
    string WrongText2 = " found in ";
    //string[] LocationNamesStr = { "bedroom", "dungeon", "fur den"};
 
@@ -109,6 +111,7 @@ public class ReportingAnomalies : MonoBehaviour {
    private bool ModuleSolved;
    private static bool ModuleSolvedStatic;
 
+   static int RACount;
    static int[] ViewingRooms = new int[3];
 
    void Awake () {
@@ -125,7 +128,7 @@ public class ReportingAnomalies : MonoBehaviour {
       WarningSystem.SetActive(false);
 
       foreach (KMSelectable B in AnomalousButtons) {
-          B.OnInteract += delegate () { AnomButtPress(B); return false; };
+         B.OnInteract += delegate () { AnomButtPress(B); return false; };
       }
 
       foreach (KMSelectable B in RoomSelectionButtons) {
@@ -141,6 +144,8 @@ public class ReportingAnomalies : MonoBehaviour {
       SendButton.OnInteract += delegate () { FileReport(); return false; };
 
       WarningSystem.SetActive(false);
+
+      RACount++;
 
       if (ignoredModules == null) {
          ignoredModules = GetComponent<KMBossModule>().GetIgnoredModules("Reporting Anomalies", new string[] {
@@ -197,12 +202,13 @@ public class ReportingAnomalies : MonoBehaviour {
                 "The Very Annoying Button",
                 "Whiteout"
             });
-         }
       }
+   }
 
    void Start () {
       WaitForModCount = true;
       ViewingRooms[0]++;
+      LoadingScreen.SetActive(false);
       if (!CanModuleOperate) {
          return;
       }
@@ -211,14 +217,23 @@ public class ReportingAnomalies : MonoBehaviour {
       Debug.LogFormat("[Reporting Anomalies #{0}] Anomalies have a {1}% chance of appearing.", ModuleId, AnomalyRNG);
       Menu.SetActive(false);
       DeloadRooms();
-      //StartCoroutine(FixMaterialForMultipleRAs());
+      if (RACount > 1) {
+         StartCoroutine(FixMaterialForMultipleRAs());
+      }
       StartCoroutine(StartAnim());
       StartCoroutine(Test());
    }
 
    IEnumerator FixMaterialForMultipleRAs () {
+      LoadingScreen.SetActive(true);
+      for (int i = 0; i < 3; i++) {
+         RightPress();
+         NowViewingText.text = "";
+         yield return new WaitForSeconds(.4f);
+      }
+      LoadingScreen.SetActive(false);
+      RightPress();
       LeftPress();
-      yield return new WaitForSeconds(.3f);
    }
 
    #region Reset Things
@@ -229,6 +244,7 @@ public class ReportingAnomalies : MonoBehaviour {
       ViewingRooms = new int[3];
       StaticCam = -1;
       Cursor.visible = true;
+      RACount = 0;
    }
 
    void Reset () {
@@ -241,7 +257,7 @@ public class ReportingAnomalies : MonoBehaviour {
    #region Buttons
 
    void LeftPress () {
-      
+
       ViewingRooms[CameraPos]--;
       CameraPos--;
       CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
@@ -256,7 +272,7 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    void RightPress () {
-      
+
       ViewingRooms[CameraPos]--;
       CameraPos++;
       CameraPos %= CameraMats.Length;
@@ -428,6 +444,7 @@ public class ReportingAnomalies : MonoBehaviour {
          default:
             break;
       }
+      Reset();
    }
 
    IEnumerator FixingScreen () {
@@ -485,7 +502,7 @@ public class ReportingAnomalies : MonoBehaviour {
             WarningT.text = "";
          }
       }
-      
+
       WarningSystem.SetActive(false);
       WarningSoundSystem.Stop();
       PlayingIntro = false;
@@ -607,7 +624,7 @@ public class ReportingAnomalies : MonoBehaviour {
       string[] ReportTypes = AnomalyTypesStr.ToArray();
       for (int i = 0; i < ReportTypes.Length; i++) {
          ReportTypes[i] = ReportTypes[i].ToUpper().Replace(" ", "_");
-         if (i < 3) { 
+         if (i < 3) {
             RoomTypes[i] = RoomTypes[i].ToUpper().Replace(" ", "_");
          }
       }
