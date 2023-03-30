@@ -49,7 +49,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public Material[] CameraMats;
    public GameObject Screen;
    public TextMesh NowViewingText;
-   string[] RoomNames = { "bedroom", "library", "living room" };
+   string[] RoomNames = { "Bedroom", "Library", "Living Room" };
    public BedroomAnomalies Bedr;
    public LibraryAnomalies Libr;
    public LivingRoomAnomalies Livi;
@@ -267,7 +267,7 @@ public class ReportingAnomalies : MonoBehaviour {
          CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
       }
       Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
-      NowViewingText.text = "Now viewing: " + RoomNames[CameraPos];
+      NowViewingText.text = RoomNames[CameraPos];
       DeloadRooms();
    }
 
@@ -282,7 +282,7 @@ public class ReportingAnomalies : MonoBehaviour {
          CameraPos %= CameraMats.Length;
       }
       Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
-      NowViewingText.text = "Now viewing: " + RoomNames[CameraPos];
+      NowViewingText.text = RoomNames[CameraPos];
       DeloadRooms();
    }
 
