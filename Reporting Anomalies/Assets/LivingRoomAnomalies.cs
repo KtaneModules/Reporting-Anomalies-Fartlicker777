@@ -84,6 +84,8 @@ public class LivingRoomAnomalies : MonoBehaviour {
             FixAbyss();
             break;
       }
+
+      Mod.RenderCameraMaterials();
    }
 
    public void ChooseAnomaly () {
@@ -109,7 +111,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
             break;
          case 2:
             DisappearInit();
-            Mod.LogAnomalies(new string[] { "Hood", "Mug that you probably didn't see to begin with", "Blue pillow", "Coffee table that you probably didn't see to begin with", "Dining table", "Chair", "Ottoman" }[DisObj]);
+            Mod.LogAnomalies(new string[] { "Hood", "Mug that you probably didn't see to begin with", "Blue pillow", "Coffee table that you probably didn't see to begin with", "Dining table", "Chair", "Ottoman", "Fasteners" }[DisObj]);
             break;
          case 3:
             LightInit();

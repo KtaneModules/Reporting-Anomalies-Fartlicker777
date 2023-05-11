@@ -122,6 +122,8 @@ public class BedroomAnomalies : MonoBehaviour {
             AbyssInit();
             break;
       }
+
+      Mod.RenderCameraMaterials();
    }
 
    #region Intruder

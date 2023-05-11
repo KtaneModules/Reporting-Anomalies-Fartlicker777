@@ -20,6 +20,8 @@ public class ReportingAnomalies : MonoBehaviour {
 
    public GameObject[] Rooms;
 
+   public Camera[] CamsToRender;
+
    public AudioSource WarningSoundSystem;
 
    public GameObject LoadingScreen; //Used so that the mod doesn't show it moving cams
@@ -257,7 +259,6 @@ public class ReportingAnomalies : MonoBehaviour {
    #region Buttons
 
    void LeftPress () {
-
       ViewingRooms[CameraPos]--;
       CameraPos--;
       CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
@@ -269,6 +270,7 @@ public class ReportingAnomalies : MonoBehaviour {
       Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
       NowViewingText.text = RoomNames[CameraPos];
       DeloadRooms();
+      //RenderCameraMaterials();
    }
 
    void RightPress () {
@@ -284,6 +286,15 @@ public class ReportingAnomalies : MonoBehaviour {
       Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
       NowViewingText.text = RoomNames[CameraPos];
       DeloadRooms();
+      //RenderCameraMaterials();
+   }
+
+   public void RenderCameraMaterials () {
+      for (int i = 0; i < 3; i++) {
+         if (CamsToRender[i].gameObject.activeSelf) {
+            CamsToRender[i].Render();
+         }
+      }
    }
 
    void AnomButtPress (KMSelectable B) {
@@ -362,7 +373,7 @@ public class ReportingAnomalies : MonoBehaviour {
 
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
       yield return new WaitForSeconds(5f);
-      //Bedr.IntruderInit();
+      //Libr.IntruderInit();
       /*Livi.DoorInit();
       yield return new WaitForSeconds(2f);
       Livi.FixDoor();*/
@@ -452,26 +463,35 @@ public class ReportingAnomalies : MonoBehaviour {
       Cursor.visible = false;
       Audio.PlaySoundAtTransform("Fixing", transform);
       yield return new WaitForSeconds(1.368f);
+      for (int i = 0; i < CamsToRender.Length; i++) {
+         if (CamsToRender[i].gameObject.activeSelf) {
+            CamsToRender[i].Render();
+         }
+      }
       Cursor.visible = true;
       Filing = false;
       PleaseStandBy.SetActive(false);
+      RenderCameraMaterials();
    }
 
    IEnumerator WrongAnomaly () {
-      Filing = false;
       //WrongCanvas.SetActive(true);
       WrongText.text = WrongText1 + AnomalyTypesStr[AnomalyType] + WrongText2 + RoomNames[RoomLocation] + ".";
       WrongText.color = new Color(WrongText.color.r, WrongText.color.g, WrongText.color.b, 0);
       var duration = .25f;
       while (WrongText.color.a < 1.0f) {
+         Debug.Log(WrongText.color.a);
          WrongText.color = new Color(WrongText.color.r, WrongText.color.g, WrongText.color.b, WrongText.color.a + (Time.deltaTime / duration));
          yield return null;
       }
       yield return new WaitForSeconds(5f);
-      while (WrongText.color.a != 0) {
+      while (WrongText.color.a > 0) {
          WrongText.color = new Color(WrongText.color.r, WrongText.color.g, WrongText.color.b, WrongText.color.a - (Time.deltaTime / duration));
          yield return null;
+         Debug.Log(WrongText.color.a);
       }
+      WrongText.color = new Color(WrongText.color.r, WrongText.color.g, WrongText.color.b, 0);
+      Filing = false;
       Reset();
    }
 

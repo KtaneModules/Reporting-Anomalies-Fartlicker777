@@ -9,6 +9,8 @@ public class LibraryAnomalies : MonoBehaviour {
 
    public ReportingAnomalies Mod;
 
+   public bool CanMakeAnomalies;
+
    public SpriteRenderer Intruder;
 
    public Sprite[] SpaceBoyfriend;
@@ -95,6 +97,8 @@ public class LibraryAnomalies : MonoBehaviour {
             FixAbyss();
             break;
       }
+
+      Mod.RenderCameraMaterials();
    }
 
    public void ChooseAnomaly () {
@@ -103,6 +107,12 @@ public class LibraryAnomalies : MonoBehaviour {
       do {
          RandomAnomaly = Rnd.Range(0, 9);
       } while (ActiveAnomalies[RandomAnomaly] || RandomAnomaly == 7 || (Mod.BrokenCam != -1 && RandomAnomaly == 5));
+
+      for (int i = 0; i < 9; i++) {
+         if (ActiveAnomalies[i] && i != 7 && Mod.BrokenCam != -1) {
+
+         }
+      }
 
       ActiveAnomalies[RandomAnomaly] = true;
 

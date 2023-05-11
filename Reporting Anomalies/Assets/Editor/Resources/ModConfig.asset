@@ -14,7 +14,11 @@ MonoBehaviour:
   id: ReportingAnomalies
   title: Reporting Anomalies
   author: me
-  description: There are four rooms, you just haven't reported a Camera Malfunction.
+  description: "There are four rooms, you just haven't reported a Camera Malfunction.\n\nDefuse
+    a bomb while the anomalies are taking over your house, and remove them from existence.\n\nThere
+    are many credits that I need to put but I'm about to play L4D2, so I'll do them
+    later.\n\nThe manual can be found in the manuals folder of the game or at ktane.timwi.de.
+    Press F5. A bunch.\n\nContact Fartlicker777#9169 on Discord if there are any bugs.\r"
   version: 
   outputFolder: build
-  previewImage: {fileID: 2800000, guid: 8aa2a16f16fb3da4db81e5aaa18225bb, type: 3}
+  previewImage: {fileID: 2800000, guid: f59424495b5aeba4ab6c74927d85c611, type: 3}
