@@ -74,6 +74,9 @@ public class BedroomAnomalies : MonoBehaviour {
             FixAbyss();
             break;
       }
+      string[] ATypes = { "Intruder", "Extra Object", "Object Disappearance", "Light", "Door Opening", "Camera Malfunction", "Object Movement", "Painting", "Abyss Presence" };
+      Mod.LogFixes(ATypes[Mod.AnomalyType], "bedroom");
+      Mod.RenderCameraMaterials();
    }
 
    public void ChooseAnomaly () {
@@ -393,6 +396,7 @@ public class BedroomAnomalies : MonoBehaviour {
    #region Abyss
 
    public void AbyssInit () {
+      Abyss.SetActive(true);
       AbyssCor = StartCoroutine(AbyssGrow(Abyss.transform.localScale));
    }
 
@@ -421,12 +425,16 @@ public class BedroomAnomalies : MonoBehaviour {
       var duration = .1f;
       var elapsed = 0f;
       Vector3 To = new Vector3(0.1095824f, 0.002272631f, 0.1095824f);
-      while (elapsed < duration) {
+      int Dis = 0;
+      while (elapsed < duration && Dis < 101) {
          Abyss.transform.localScale = Vector3.Lerp(From, To, elapsed / duration);
          //Debug.Log(Abyss.transform.localScale);
          yield return null;
          elapsed += Time.deltaTime;
+         Dis++;
       }
+      Abyss.SetActive(false);
+      Abyss.transform.localScale = new Vector3(0.1095824f, 0.002272631f, 0.1095824f);
    }
 
    #endregion

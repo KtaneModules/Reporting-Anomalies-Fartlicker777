@@ -52,6 +52,17 @@ public class ReportingAnomalies : MonoBehaviour {
    public GameObject Screen;
    public TextMesh NowViewingText;
    string[] RoomNames = { "Bedroom", "Library", "Living Room" };
+
+   float[][] ToppinsHeight = {
+      new float[] { 2.301f, 1.860f, 1.419f, 0.979f, 0.537f }, //Mushroom
+      new float[] { 2.287f, 1.849f, 1.407f, 0.965f, 0.521f }, //Cheese
+      new float[] { 2.279f, 1.839f, 1.398f, 0.955f, 0.515f }, //Tomato
+      new float[] { 2.297f, 1.856f, 1.413f, 0.969f, 0.531f }, //Sausage
+      new float[] { 2.296f, 1.852f, 1.414f, 0.972f, 0.533f } // :)
+   };
+   int[] RandHeight = { 0, 1, 2, 3, 4 };
+   public GameObject[] Toppins;
+
    public BedroomAnomalies Bedr;
    public LibraryAnomalies Libr;
    public LivingRoomAnomalies Livi;
@@ -115,6 +126,8 @@ public class ReportingAnomalies : MonoBehaviour {
 
    static int RACount;
    static int[] ViewingRooms = new int[3];
+
+   bool NoModsLeft;
 
    void Awake () {
       ModuleId = ModuleIdCounter++;
@@ -214,7 +227,15 @@ public class ReportingAnomalies : MonoBehaviour {
       if (!CanModuleOperate) {
          return;
       }
+
       NotMod.transform.localScale = new Vector3((float) ((1 / NotMod.transform.lossyScale.x) - .2), (float) ((1 / NotMod.transform.lossyScale.y) - .2), (float) ((1 / NotMod.transform.lossyScale.z) - .2));
+      if (Rnd.Range(0, 5) != 0) { //80% chance to randomize Toppins Positioning
+         RandHeight.Shuffle();
+         for (int i = 0; i < 5; i++) {
+            Toppins[i].transform.localPosition = new Vector3(Toppins[i].transform.localPosition.x, ToppinsHeight[i][RandHeight[i]], Toppins[i].transform.localPosition.z);
+         }
+      }
+
       AnomalyRNG = Rnd.Range(30, 41);
       Debug.LogFormat("[Reporting Anomalies #{0}] Anomalies have a {1}% chance of appearing.", ModuleId, AnomalyRNG);
       Menu.SetActive(false);
@@ -389,6 +410,10 @@ public class ReportingAnomalies : MonoBehaviour {
       Debug.LogFormat("[Reporting Anomalies #{0}] Subtype: {1}.", ModuleId, SubType);
    }
 
+   public void LogFixes (string AType, string RType) {
+      Debug.LogFormat("[Reporting Anomalies #{0}] Fixed a(n) {1} Anomaly in {2}.", ModuleId, AType, RType);
+   }
+
    #endregion
 
    #region Animations
@@ -480,7 +505,7 @@ public class ReportingAnomalies : MonoBehaviour {
       WrongText.color = new Color(WrongText.color.r, WrongText.color.g, WrongText.color.b, 0);
       var duration = .25f;
       while (WrongText.color.a < 1.0f) {
-         Debug.Log(WrongText.color.a);
+         //Debug.Log(WrongText.color.a);
          WrongText.color = new Color(WrongText.color.r, WrongText.color.g, WrongText.color.b, WrongText.color.a + (Time.deltaTime / duration));
          yield return null;
       }
@@ -488,7 +513,7 @@ public class ReportingAnomalies : MonoBehaviour {
       while (WrongText.color.a > 0) {
          WrongText.color = new Color(WrongText.color.r, WrongText.color.g, WrongText.color.b, WrongText.color.a - (Time.deltaTime / duration));
          yield return null;
-         Debug.Log(WrongText.color.a);
+         //Debug.Log(WrongText.color.a);
       }
       WrongText.color = new Color(WrongText.color.r, WrongText.color.g, WrongText.color.b, 0);
       Filing = false;
@@ -626,6 +651,10 @@ public class ReportingAnomalies : MonoBehaviour {
             StartCoroutine(Warning());
          }
          FirstTimeThreeAnomalies = true;
+      }
+      if (SolveCount >= ModCount && !NoModsLeft) {
+         NoModsLeft = true;
+         Debug.LogFormat("[Reporting Anomalies #{0}] All other non-ignored solvables have been solved. Production of anomalies has been shut down. There are {1} remaining active anomalies.", ModuleId, ActiveAnomalies);
       }
       if (SolveCount >= ModCount && ActiveAnomalies == 0) {
          //Debug.Log(SolveCount);

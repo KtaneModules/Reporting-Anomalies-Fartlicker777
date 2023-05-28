@@ -84,7 +84,8 @@ public class LivingRoomAnomalies : MonoBehaviour {
             FixAbyss();
             break;
       }
-
+      string[] ATypes = { "Intruder", "Extra Object", "Object Disappearance", "Light", "Door Opening", "Camera Malfunction", "Object Movement", "Painting", "Abyss Presence" };
+      Mod.LogFixes(ATypes[Mod.AnomalyType], "living room");
       Mod.RenderCameraMaterials();
    }
 
@@ -402,6 +403,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
          elapsed += Time.deltaTime;
       }
       Abyss.SetActive(false);
+      Abyss.transform.localScale = new Vector3(0.10958f, 0.002272631f, 0.10958f);
    }
 
    #endregion
