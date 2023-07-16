@@ -212,7 +212,7 @@ public class ReportingAnomalies : MonoBehaviour {
                 "The Troll",
                 "Turn The Key",
                 "The Twin",
-                "Übermodule",
+                "Ãœbermodule",
                 "Ultimate Custom Night",
                 "The Very Annoying Button",
                 "Whiteout"
@@ -664,7 +664,7 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
 #pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} left/right to switch between cameras. Use !{0} report X in Y to report that specific anomaly in that specific room. Note that underscores are used in place of spaces for anomaly and room names.";
+   private readonly string TwitchHelpMessage = @"Use !{0} left/right to switch between cameras. Use !{0} report X in Y to report that specific anomaly in that specific room. Use !{0} anomalies to output the anomaly names to chat. Note that underscores are used in place of spaces for anomaly and room names.";
 #pragma warning restore 414
 
    IEnumerator ProcessTwitchCommand (string Command) {
@@ -696,6 +696,9 @@ public class ReportingAnomalies : MonoBehaviour {
       }
       else if (Parameters.Length == 1 && Parameters[0] == "RIGHT") {
          RightButton.OnInteract();
+      }
+      else if (Parameters.Length == 1 && Parameters[0] == "ANOMALIES") {
+         yield return "sendtochat Anomalies: " + AnomalyTypesStr.Join(", ");
       }
       else {
          yield return "sendtochaterror I don't understand!";
