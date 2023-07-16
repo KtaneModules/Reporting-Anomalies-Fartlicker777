@@ -664,7 +664,7 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
 #pragma warning disable 414
-   private readonly string TwitchHelpMessage = @"Use !{0} left/right to switch between cameras. Use !{0} report X in Y to report that specific anomaly in that specific room. Use !{0} anomalies to output the anomaly names to chat. Note that underscores are used in place of spaces for anomaly and room names.";
+   private readonly string TwitchHelpMessage = @"Use !{0} left/right to switch between cameras. Use !{0} report X in Y to report that specific anomaly in that specific room. Use !{0} anomalies to output the anomaly names to chat. Note that underscores must be used in place of spaces for anomaly and room names when reporting.";
 #pragma warning restore 414
 
    IEnumerator ProcessTwitchCommand (string Command) {
