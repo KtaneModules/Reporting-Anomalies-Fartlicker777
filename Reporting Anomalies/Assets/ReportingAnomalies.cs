@@ -631,12 +631,12 @@ public class ReportingAnomalies : MonoBehaviour {
          }
       }
 
-      ModCount = Bomb.GetSolvableModuleNames().Count() - Ignored;
+      ModCount = Bomb.GetSolvableModuleNames().Count(x => !ignoredModules.Contains(x);
 
       //Debug.Log(ModCount);
 
-      if (SolveCount != Bomb.GetSolvedModuleNames().Count()) {
-         while (SolveCount != Bomb.GetSolvedModuleNames().Count()) { //In case multiple modules solve simultaneously
+      if (SolveCount != Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x)) {
+         while (SolveCount != Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x)) { //In case multiple modules solve simultaneously
             SolveCount++;
             if (ActiveAnomalies >= 4) {
                Strike();
@@ -654,7 +654,8 @@ public class ReportingAnomalies : MonoBehaviour {
       }
       if (SolveCount >= ModCount && !NoModsLeft) {
          NoModsLeft = true;
-         Debug.LogFormat("[Reporting Anomalies #{0}] All other non-ignored solvables have been solved. Production of anomalies has been shut down. There are {1} remaining active anomalies.", ModuleId, ActiveAnomalies);
+         AnomalyInit();
+         Debug.LogFormat("[Reporting Anomalies #{0}] All other non-ignored solvables have been solved. Production of anomalies has been shut down. There {1} {2} remaining active {3}.", ModuleId, ActiveAnomalies == 1 ? "is" : "are", ActiveAnomalies, ActiveAnomalies == 1 ? "anomaly" : "anomalies");
       }
       if (SolveCount >= ModCount && ActiveAnomalies == 0) {
          //Debug.Log(SolveCount);
