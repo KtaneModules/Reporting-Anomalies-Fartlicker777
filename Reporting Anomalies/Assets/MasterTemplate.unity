@@ -1211,6 +1211,14 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 400032, guid: 3c4d546f5cdcf004bb2752130e8dd2ab, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0.036
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 3c4d546f5cdcf004bb2752130e8dd2ab, type: 2}
+      propertyPath: m_Name
+      value: The Board Walk
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3c4d546f5cdcf004bb2752130e8dd2ab, type: 2}
   m_IsPrefabParent: 0

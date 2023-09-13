@@ -631,18 +631,18 @@ public class ReportingAnomalies : MonoBehaviour {
          }
       }
 
-      ModCount = Bomb.GetSolvableModuleNames().Count(x => !ignoredModules.Contains(x);
+      ModCount = Bomb.GetSolvableModuleNames().Count(x => !ignoredModules.Contains(x));
 
       //Debug.Log(ModCount);
 
-      if (SolveCount != Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x)) {
-         while (SolveCount != Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x)) { //In case multiple modules solve simultaneously
+      if (SolveCount != Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x))) {
+         while (SolveCount != Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x))) { //In case multiple modules solve simultaneously
             SolveCount++;
             if (ActiveAnomalies >= 4) {
                Strike();
             }
          }
-         if (Rnd.Range(0, 99) <= AnomalyRNG) {
+         if (Rnd.Range(0, 99) <= AnomalyRNG && !(SolveCount >= ModCount)) {
             AnomalyInit();
          }
       }
@@ -654,7 +654,7 @@ public class ReportingAnomalies : MonoBehaviour {
       }
       if (SolveCount >= ModCount && !NoModsLeft) {
          NoModsLeft = true;
-         AnomalyInit();
+         AnomalyInit(); //Guarantees one spawned anomaly at the end
          Debug.LogFormat("[Reporting Anomalies #{0}] All other non-ignored solvables have been solved. Production of anomalies has been shut down. There {1} {2} remaining active {3}.", ModuleId, ActiveAnomalies == 1 ? "is" : "are", ActiveAnomalies, ActiveAnomalies == 1 ? "anomaly" : "anomalies");
       }
       if (SolveCount >= ModCount && ActiveAnomalies == 0) {
