@@ -395,9 +395,9 @@ public class ReportingAnomalies : MonoBehaviour {
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
       yield return new WaitForSeconds(5f);
       //Libr.IntruderInit();
-      /*Livi.DoorInit();
+      Livi.DoorInit();
       yield return new WaitForSeconds(2f);
-      Livi.FixDoor();*/
+      Livi.FixDoor();
    }
 
    #region Logging

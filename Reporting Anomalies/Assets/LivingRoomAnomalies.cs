@@ -254,8 +254,8 @@ public class LivingRoomAnomalies : MonoBehaviour {
    }
 
    public void FixPainting () {
-      PosterAnomaly[0].SetActive(true);
       PosterAnomaly[TypeOfPainting].SetActive(false);
+      PosterAnomaly[0].SetActive(true);
       TypeOfPainting = -1;
    }
 
