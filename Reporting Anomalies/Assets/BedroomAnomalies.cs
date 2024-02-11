@@ -79,6 +79,23 @@ public class BedroomAnomalies : MonoBehaviour {
       Mod.RenderCameraMaterials();
    }
 
+   public bool DoesItSoftlock () {
+
+      for (int i = 0; i < 9; i++) { //Goes through the anomalies in the order { "Intruder", "Extra Object", "Object Disappearance", "Light", "Door Opening", "Camera Malfunction", "Object Movement", "Painting", "Abyss Presence" };
+         if (i == 5 && Mod.BrokenCam != -1) { //Checks if there is a broken camera anywhere
+            continue;
+         }
+         else if (ActiveAnomalies[i]) { //Checks if that anomaly is active
+            continue;
+         }
+         else { //Returns false because anomaly[i] is inactive
+            return false;
+         }
+      }
+
+      return true; //Only possible when it continues 9 times in a row.
+   }
+
    public void ChooseAnomaly () {
       Mod.ActiveAnomalies++;
       int RandomAnomaly = Rnd.Range(0, 9);

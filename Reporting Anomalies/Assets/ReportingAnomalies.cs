@@ -69,6 +69,8 @@ public class ReportingAnomalies : MonoBehaviour {
    public int BrokenCam = -1;
    static int StaticCam = -1;
 
+   int[] RoomChoosingOrder = { 0, 1, 2};
+
    public int RoomLocation = -1;
    public int AnomalyType = -1;
 
@@ -247,6 +249,14 @@ public class ReportingAnomalies : MonoBehaviour {
       StartCoroutine(Test());
    }
 
+   IEnumerator Test () { //If I want to test an anomaly/anything for a bug
+      yield return new WaitForSeconds(5f);
+      //Libr.IntruderInit();
+      Livi.DoorInit();
+      yield return new WaitForSeconds(2f);
+      Livi.FixDoor();
+   }
+
    IEnumerator FixMaterialForMultipleRAs () {
       LoadingScreen.SetActive(true);
       for (int i = 0; i < 3; i++) {
@@ -391,14 +401,6 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    #endregion
-
-   IEnumerator Test () { //If I want to test an anomaly/anything for a bug
-      yield return new WaitForSeconds(5f);
-      //Libr.IntruderInit();
-      Livi.DoorInit();
-      yield return new WaitForSeconds(2f);
-      Livi.FixDoor();
-   }
 
    #region Logging
 
@@ -582,17 +584,36 @@ public class ReportingAnomalies : MonoBehaviour {
    #endregion
 
    void AnomalyInit () {
-      switch (Rnd.Range(0, 3)) {
-         case 0:
-            Bedr.ChooseAnomaly();
+
+      RoomChoosingOrder = RoomChoosingOrder.Shuffle();
+      bool MadeAnomaly = false;
+
+      for (int i = 0; i < 3; i++) {
+         switch (RoomChoosingOrder[i]) {
+            case 0:
+               if (!Bedr.DoesItSoftlock()) {
+                  Bedr.ChooseAnomaly();
+                  MadeAnomaly = true;
+               }
+               break;
+            case 1:
+               if (!Libr.DoesItSoftlock()) {
+                  Libr.ChooseAnomaly();
+                  MadeAnomaly = true;
+               }
+               break;
+            case 2:
+               if (!Livi.DoesItSoftlock()) {
+                  Livi.ChooseAnomaly();
+                  MadeAnomaly = true;
+               }
+               break;
+         }
+         if (MadeAnomaly) {
             break;
-         case 1:
-            Libr.ChooseAnomaly();
-            break;
-         case 2:
-            Livi.ChooseAnomaly();
-            break;
+         }
       }
+
       StaticCam = BrokenCam;
    }
 

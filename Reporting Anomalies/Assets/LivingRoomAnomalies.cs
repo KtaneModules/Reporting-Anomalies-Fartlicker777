@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Kino;
 using Rnd = UnityEngine.Random;
 
 public class LivingRoomAnomalies : MonoBehaviour {
@@ -18,11 +19,14 @@ public class LivingRoomAnomalies : MonoBehaviour {
    * ~~Abyss~~
    */
 
-   public AudioSource Music;
+   public AnalogGlitch GlitchEffect;
+
+   public AudioSource[] Music;
 
    public ReportingAnomalies Mod;
 
-   public GameObject Intruder;
+   public GameObject[] Intruder;
+   int IntruderSubType;
 
    public GameObject[] ExtraObjects;
    int ExtraObj;
@@ -31,7 +35,11 @@ public class LivingRoomAnomalies : MonoBehaviour {
    int DisObj;
 
    public GameObject[] LightAnomaly; //NA
+
    public GameObject Door;
+   public GameObject OvenDoor;
+
+   //public Camera CamGirls;
 
    public GameObject[] ObjectMovement;
    public GameObject FakeClockHand;
@@ -89,6 +97,26 @@ public class LivingRoomAnomalies : MonoBehaviour {
       Mod.RenderCameraMaterials();
    }
 
+   public bool DoesItSoftlock () {
+
+      for (int i = 0; i < 9; i++) { //Goes through the anomalies in the order { "Intruder", "Extra Object", "Object Disappearance", "Light", "Door Opening", "Camera Malfunction", "Object Movement", "Painting", "Abyss Presence" };
+         if (i == 3) {
+            continue;
+         }
+         else if (i == 5 && Mod.BrokenCam != -1) { //Checks if there is a broken camera anywhere
+            continue;
+         }
+         else if (ActiveAnomalies[i]) { //Checks if that anomaly is active
+            continue;
+         }
+         else { //Returns false because anomaly[i] is inactive
+            return false;
+         }
+      }
+
+      return true; //Only possible when it continues 9 times in a row.
+   }
+
    public void ChooseAnomaly () {
       Mod.ActiveAnomalies++;
       int RandomAnomaly = Rnd.Range(0, 9);
@@ -139,14 +167,36 @@ public class LivingRoomAnomalies : MonoBehaviour {
    #region Intruder
 
    public void IntruderInit () {
-      Intruder.SetActive(true);
-      IntruderCor = StartCoroutine(TankSong());
-      Music.Play();
+      IntruderSubType = Rnd.Range(0, 2);
+      Intruder[IntruderSubType].SetActive(true);
+      switch (IntruderSubType) {
+         case 0:
+            IntruderCor = StartCoroutine(TankSong());
+            Music[0].Play();
+            break;
+         case 1:
+            IntruderCor = StartCoroutine(SayonaraSong());
+            Music[1].Play();
+            //CamGirls.
+            GlitchEffect.scanLineJitter = 0.154f;
+            GlitchEffect.verticalJump = 0.059f;
+            GlitchEffect.colorDrift = 0.13f;
+            break;
+         default:
+            break;
+      }
+      
+      
    }
 
    public void FixIntruder () {
-      Intruder.SetActive(false);
-      Music.Stop();
+      Intruder[IntruderSubType].SetActive(false);
+      for (int i = 0; i < Music.Length; i++) {
+         Music[i].Stop();
+      }
+      GlitchEffect.scanLineJitter = 0;
+      GlitchEffect.verticalJump = 0;
+      GlitchEffect.colorDrift = 0;
       StopCoroutine(IntruderCor);
    }
 
@@ -154,10 +204,23 @@ public class LivingRoomAnomalies : MonoBehaviour {
       //Intruder.SetActive(true);
       while (true) {
          if (Mod.CameraPos != 2) {
-            Music.volume = 0;
+            Music[0].volume = 0;
          }
          else {
-            Music.volume = .66f;
+            Music[0].volume = .66f;
+         }
+         yield return null;
+      }
+   }
+
+   IEnumerator SayonaraSong () {
+      //Intruder.SetActive(true);
+      while (true) {
+         if (Mod.CameraPos != 2) {
+            Music[1].volume = 0;
+         }
+         else {
+            Music[1].volume = 1f;
          }
          yield return null;
       }
@@ -211,33 +274,66 @@ public class LivingRoomAnomalies : MonoBehaviour {
 
    public void DoorInit () {
       //Debug.Log(Door);
-      StartCoroutine(MoveDoor());
+      if (Rnd.Range(0, 2) == 0) {
+         StartCoroutine(MoveDoor());
+      }
+      else {
+         StartCoroutine(MoveOvenDoor());
+      }
    }
 
    public void FixDoor () {
       //Debug.Log(Door);
       StartCoroutine(ResetDoor());
+      StartCoroutine(ResetOvenDoor());
+   }
+
+   IEnumerator MoveOvenDoor () {
+      var duration = .1f;
+      var elapsed = 0f;
+      while (OvenDoor.transform.localEulerAngles.x < 30f) {
+         //Debug.Log(Door.transform.localEulerAngles.y);
+         OvenDoor.transform.localEulerAngles = new Vector3(Mathf.Lerp(0, 30f, elapsed / duration), 0, 0);
+         yield return null;
+         elapsed += Time.deltaTime;
+      }
+      OvenDoor.transform.localEulerAngles = new Vector3(30f, 0, 0);
    }
 
    IEnumerator MoveDoor () {
       //Debug.Log("Pemus");
       var duration = .25f;
       var elapsed = 0f;
-      while (Door.transform.localEulerAngles.y > -87f) {
+      while (Door.transform.localEulerAngles.y < 270f || Door.transform.localEulerAngles.y > 276f) {
+         //Debug.Log(Door.transform.localEulerAngles.y);
          Door.transform.localEulerAngles = new Vector3(270, 0, Mathf.Lerp(0, -87f, elapsed / duration));
          yield return null;
          elapsed += Time.deltaTime;
       }
+      Door.transform.localEulerAngles = new Vector3(270, 0, -87f);
    }
 
    IEnumerator ResetDoor () {
       var duration = .25f;
       var elapsed = 0f;
-      while (Door.transform.localEulerAngles.y > 0) {
+      while (Door.transform.localEulerAngles.y > 3 || Door.transform.localEulerAngles.y < -3) {
          Door.transform.localEulerAngles = new Vector3(270, 0, Mathf.Lerp(-87f, 0, elapsed / duration));
          yield return null;
          elapsed += Time.deltaTime;
       }
+      Door.transform.localEulerAngles = new Vector3(270, 0, 0);
+   }
+
+   IEnumerator ResetOvenDoor () {
+      var duration = .1f;
+      var elapsed = 0f;
+      while (OvenDoor.transform.localEulerAngles.x > 0) {
+         //Debug.Log(Door.transform.localEulerAngles.y);
+         OvenDoor.transform.localEulerAngles = new Vector3(Mathf.Lerp(30, 0, elapsed / duration), 0, 0);
+         yield return null;
+         elapsed += Time.deltaTime;
+      }
+      OvenDoor.transform.localEulerAngles = new Vector3(0, 0, 0);
    }
 
    #endregion
