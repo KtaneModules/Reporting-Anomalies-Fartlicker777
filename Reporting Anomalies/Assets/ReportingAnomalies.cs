@@ -14,6 +14,8 @@ public class ReportingAnomalies : MonoBehaviour {
    public KMBombInfo Bomb;
    public KMAudio Audio;
 
+   public bool DEBUGMODEACTIVE = true;
+
    public static string[] ignoredModules = null;
 
    public GameObject NotMod;
@@ -252,9 +254,9 @@ public class ReportingAnomalies : MonoBehaviour {
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
       yield return new WaitForSeconds(5f);
       //Libr.IntruderInit();
-      Livi.DoorInit();
-      yield return new WaitForSeconds(2f);
-      Livi.FixDoor();
+      Bedr.IntruderInit();
+      yield return new WaitForSeconds(10f);
+      Bedr.FixIntruder();
    }
 
    IEnumerator FixMaterialForMultipleRAs () {
@@ -663,7 +665,7 @@ public class ReportingAnomalies : MonoBehaviour {
                Strike();
             }
          }
-         if (Rnd.Range(0, 99) <= AnomalyRNG && !(SolveCount >= ModCount)) {
+         if ((Rnd.Range(0, 99) <= AnomalyRNG && !(SolveCount >= ModCount)) || DEBUGMODEACTIVE) {
             AnomalyInit();
          }
       }

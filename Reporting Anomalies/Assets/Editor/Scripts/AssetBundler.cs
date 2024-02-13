@@ -551,7 +551,7 @@ public class AssetBundler {
                 "Unlit/Transparent Cutout", "Unlit/Color", "Mobile/Unlit (Supports Lightmap)", "Unlit/Texture",
                 "KT/Blend Lit and Unlit", "KT/Blend Lit and Unlit Vertex Color", "KT/Blend Unlit", "GUI/KT 3D Text",
                 "KT/Mobile/Diffuse", "KT/Mobile/DiffuseTint", "KT/Transparent/Mobile Diffuse Underlay200", "KT/Unlit/TexturedLightmap",
-                "KT/Unlit/TransparentVertexColorUnderlay30", "KT/Outline"
+                "KT/Unlit/TransparentVertexColorUnderlay30", "KT/Outline", "Hidden/Kino/Glitch/Analog", "Hidden/Kino/Glitch/Digital"
             };
 
       string[] prefabsGUIDs = AssetDatabase.FindAssets("t: prefab");

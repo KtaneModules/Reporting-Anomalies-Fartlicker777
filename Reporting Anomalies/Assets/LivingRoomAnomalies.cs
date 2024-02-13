@@ -19,6 +19,8 @@ public class LivingRoomAnomalies : MonoBehaviour {
    * ~~Abyss~~
    */
 
+   public GameObject[] Lights;
+
    public AnalogGlitch GlitchEffect;
 
    public AudioSource[] Music;
@@ -122,7 +124,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
       int RandomAnomaly = Rnd.Range(0, 9);
       do {
          RandomAnomaly = Rnd.Range(0, 9);
-      } while (ActiveAnomalies[RandomAnomaly] || RandomAnomaly == 3 || (Mod.BrokenCam != -1 && RandomAnomaly == 5));
+      } while (ActiveAnomalies[RandomAnomaly] || (Mod.BrokenCam != -1 && RandomAnomaly == 5));
 
       string[] ATypes = { "Intruder", "Extra Object", "Object Disappearance", "Light", "Door Opening", "Camera Malfunction", "Object Movement", "Painting", "Abyss Presence"};
 
@@ -136,7 +138,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
             break;
          case 1:
             ExtraInit();
-            Mod.LogAnomalies(new string[] { "Rug", "Chair", "Tea set", "Wine bottle" }[ExtraObj]);
+            Mod.LogAnomalies(new string[] { "Rug", "Chair", "Tea set", "Wine bottle on cabinet", "Wine bottle in shelf" }[ExtraObj]);
             break;
          case 2:
             DisappearInit();
@@ -167,7 +169,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
    #region Intruder
 
    public void IntruderInit () {
-      IntruderSubType = Rnd.Range(0, 2);
+      IntruderSubType = Rnd.Range(1, 2);
       Intruder[IntruderSubType].SetActive(true);
       switch (IntruderSubType) {
          case 0:
@@ -185,8 +187,6 @@ public class LivingRoomAnomalies : MonoBehaviour {
          default:
             break;
       }
-      
-      
    }
 
    public void FixIntruder () {
@@ -259,13 +259,19 @@ public class LivingRoomAnomalies : MonoBehaviour {
    #region Light Anomaly
 
    public void LightInit () {
-      Debug.Log("A LIGHT ANOMALY HAS OCCURED IN LIVING ROOM. AUTOMATICALLY SOLVING.");
-      Mod.Solve();
+      //Debug.Log("A LIGHT ANOMALY HAS OCCURED IN LIVING ROOM. AUTOMATICALLY SOLVING.");
+      //Mod.Solve();
+      for (int i = 0; i < Lights.Length; i++) {
+         Lights[i].SetActive(false);
+      }
    }
 
    public void FixLight () {
-      Debug.Log("A LIGHT ANOMALY HAS BEEN FIXED IN LIVING ROOM SOMEHOW. AUTOMATICALLY SOLVING.");
-      Mod.Solve();
+      //Debug.Log("A LIGHT ANOMALY HAS BEEN FIXED IN LIVING ROOM SOMEHOW. AUTOMATICALLY SOLVING.");
+      //Mod.Solve();
+      for (int i = 0; i < Lights.Length; i++) {
+         Lights[i].SetActive(true);
+      }
    }
 
    #endregion

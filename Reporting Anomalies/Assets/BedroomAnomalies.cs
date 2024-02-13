@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Rnd = UnityEngine.Random;
+using Kino;
 
 public class BedroomAnomalies : MonoBehaviour {
 
-   public AudioSource Music;
+   public Camera Cam;
+   public DigitalGlitch GlitchEffect;
+   public SpriteRenderer BlackSquare;
+
+   Coroutine Blackness;
+
+   public AudioSource[] Music;
 
    public ReportingAnomalies Mod;
 
-   public GameObject Intruder;
+   public GameObject[] Intruder;
 
    public GameObject[] ExtraObjects;
    int ExtraObj;
@@ -115,7 +122,7 @@ public class BedroomAnomalies : MonoBehaviour {
             break;
          case 1:
             ExtraInit();
-            Mod.LogAnomalies(new string[] { "Trash Bin", "Newton's Cradle"}[ExtraObj]);
+            Mod.LogAnomalies(new string[] { "Trash Bin", "Newton's Cradle", "Thing crammed in desk", "Water bottle left of computer", "Paper stack", "Water bottle on computer"}[ExtraObj]);
             break;
          case 2:
             DisappearInit();
@@ -132,11 +139,11 @@ public class BedroomAnomalies : MonoBehaviour {
             break;
          case 6:
             MoveInit();
-            Mod.LogAnomalies(new string[] { "Chair", "PC", "Bed"}[MovedObject]);
+            Mod.LogAnomalies(new string[] { "Chair", "Bed", "Paper box"}[MovedObject]);
             break;
          case 7:
             PaintingInit();
-            Mod.LogAnomalies(new string[] { "tsirotoM thgindiM", "KILL", "Green Day" }[TypeOfPainting]);
+            Mod.LogAnomalies(new string[] { "tsirotoM thgindiM", "KILL", "Green Day", "gaaaaaaaaaaay" }[TypeOfPainting]);
             break;
          case 8:
             AbyssInit();
@@ -149,15 +156,34 @@ public class BedroomAnomalies : MonoBehaviour {
    #region Intruder
 
    public void IntruderInit () {
-      Intruder.SetActive(true);
-      IntruderCor = StartCoroutine(Fabore());
-      Music.Play();
+      int RandIntruder = Rnd.Range(1, Intruder.Length);
+      Intruder[RandIntruder].SetActive(true);
+      switch (RandIntruder) {
+         case 0:
+            IntruderCor = StartCoroutine(Fabore());
+            break;
+         case 1:
+            IntruderCor = StartCoroutine(Puppet());
+            BlackSquare.gameObject.SetActive(true);
+            Blackness = StartCoroutine(FadingConsciousness());
+            break;
+         default:
+            break;
+      }
+      Music[RandIntruder].Play();
    }
 
    public void FixIntruder () {
-      Intruder.SetActive(false);
-      Music.Stop();
+      for (int i = 0; i < Intruder.Length; i++) {
+         Intruder[i].SetActive(false);
+         Music[i].Stop();
+      }
       StopCoroutine(IntruderCor);
+      StopCoroutine(Blackness);
+      GlitchEffect.intensity = 0f;
+      Cam.transform.localEulerAngles = new Vector3(0, 150f, 0);
+      BlackSquare.gameObject.SetActive(false);
+      BlackSquare.color = new Color32(0, 0, 0, 0);
    }
 
    IEnumerator Fabore () {
@@ -167,12 +193,82 @@ public class BedroomAnomalies : MonoBehaviour {
          var elapsed = 0f;
          while (elapsed < duration) {
             if (Mod.CameraPos != 0) {
-               Music.volume = 0;
+               Music[0].volume = 0;
             }
             else {
-               Music.volume = 1;
+               Music[0].volume = 1;
             }
-            Intruder.transform.localEulerAngles = new Vector3(270, Mathf.Lerp(0, 359, elapsed / duration), 0);
+            Intruder[0].transform.localEulerAngles = new Vector3(270, Mathf.Lerp(0, 359, elapsed / duration), 0);
+            yield return null;
+            elapsed += Time.deltaTime;
+         }
+      }
+   }
+
+   IEnumerator FadingConsciousness () {
+      var duration = .5f;
+      var elapsed = 0f;
+      while (true) {
+         while (elapsed < duration) {
+            //Debug.Log("Fading");
+            BlackSquare.color = new Color32(0, 0, 0, (byte) (elapsed * 2 * 255));
+            yield return null;
+            elapsed += Time.deltaTime;
+         }
+         
+         elapsed = 0f;
+         yield return new WaitForSeconds(.5f);
+         while (elapsed < duration) {
+            //Debug.Log("Lighting");
+            //Debug.Log(elapsed);
+            BlackSquare.color = new Color32(0, 0, 0, (byte) (255 - (elapsed * 2 * 255)));
+            yield return null;
+            elapsed += Time.deltaTime;
+         }
+         yield return new WaitForSeconds(.5f);
+         elapsed = 0f;
+      }
+   }
+
+   IEnumerator Puppet () {
+      GlitchEffect.intensity = Rnd.Range(0.3f, 0.45f);
+      var duration = 2f;
+      var elapsed = 0f;
+      while (elapsed < duration) {
+         if (Mod.CameraPos != 0) {
+            Music[1].volume = 0;
+         }
+         else {
+            Music[1].volume = 1;
+         }
+         Cam.transform.localEulerAngles = new Vector3(0, Mathf.Lerp(150, 180, elapsed / duration), 0);
+         yield return null;
+         elapsed += Time.deltaTime;
+      }
+      while (true) {
+         duration = 4f;
+         elapsed = 0f;
+         while (elapsed < duration) {
+            if (Mod.CameraPos != 0) {
+               Music[1].volume = 0;
+            }
+            else {
+               Music[1].volume = 1;
+            }
+            Cam.transform.localEulerAngles = new Vector3(0, Mathf.Lerp(180, 120, elapsed / duration), 0);
+            yield return null;
+            elapsed += Time.deltaTime;
+         }
+         duration = 4f;
+         elapsed = 0f;
+         while (elapsed < duration) {
+            if (Mod.CameraPos != 0) {
+               Music[1].volume = 0;
+            }
+            else {
+               Music[1].volume = 1;
+            }
+            Cam.transform.localEulerAngles = new Vector3(0, Mathf.Lerp(120, 180, elapsed / duration), 0);
             yield return null;
             elapsed += Time.deltaTime;
          }
@@ -298,16 +394,7 @@ public class BedroomAnomalies : MonoBehaviour {
    #region Object Movement
 
    public void MoveInit () {
-      do {
-         MovedObject = Rnd.Range(0, 3);
-      } while ((PCDis && MovedObject == 1) || (PCMove && MovedObject == 2));
-      
-      if (MovedObject == 1) {
-         PCMove = true;
-      }
-      else if (MovedObject == 2) {
-         BedMove = true;
-      }
+      MovedObject = Rnd.Range(0, ObjectMovement.Length);
 
       StartCoroutine(ShowMove());
       //ObjectMovement[MovedObject].SetActive(false);
@@ -319,7 +406,6 @@ public class BedroomAnomalies : MonoBehaviour {
       var elapsed = 0f;
       switch (MovedObject) {
          case 0:
-
             while (elapsed < duration) {
                ObjectMovement[0].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(47.814f, 90f, elapsed / duration), 0);
                yield return null;
@@ -329,15 +415,15 @@ public class BedroomAnomalies : MonoBehaviour {
             break;
          case 1:
             while (elapsed < duration) {
-               ObjectMovement[1].transform.localPosition = new Vector3(7.2052f, 1.405f, Mathf.Lerp(-5.2043f, -4.5f, elapsed / duration));
+               ObjectMovement[1].transform.localPosition = new Vector3(Mathf.Lerp(-.39f, 0.17f, elapsed / duration), 0.04f, Mathf.Lerp(-6.853f, -6.45f, elapsed / duration));
+               ObjectMovement[1].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(0, -21.163f, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
             }
             break;
          case 2:
             while (elapsed < duration) {
-               ObjectMovement[2].transform.localPosition = new Vector3(Mathf.Lerp(-.39f, 0.17f, elapsed / duration), 0.04f, Mathf.Lerp(-6.853f, -6.45f, elapsed / duration));
-               ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(0, -21.163f, elapsed / duration), 0);
+               ObjectMovement[2].transform.localPosition = new Vector3(-0.1517326f, .37f, Mathf.Lerp(0.915f, 0.65f, elapsed / duration));
                yield return null;
                elapsed += Time.deltaTime;
             }
@@ -366,15 +452,15 @@ public class BedroomAnomalies : MonoBehaviour {
             break;
          case 1:
             while (elapsed < duration) {
-               ObjectMovement[1].transform.localPosition = new Vector3(7.2052f, 1.405f, Mathf.Lerp(-4.5f, -5.2043f, elapsed / duration));
+               ObjectMovement[1].transform.localPosition = new Vector3(Mathf.Lerp(0.17f, -.39f, elapsed / duration), 0.04f, Mathf.Lerp(-6.45f, -6.853f, elapsed / duration));
+               ObjectMovement[1].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(-21.163f, 0, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
             }
             break;
-         case 2:
+            case 2:
             while (elapsed < duration) {
-               ObjectMovement[2].transform.localPosition = new Vector3(Mathf.Lerp(0.17f, -.39f, elapsed / duration), 0.04f, Mathf.Lerp(-6.45f, -6.853f, elapsed / duration));
-               ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(-21.163f, 0, elapsed / duration), 0);
+               ObjectMovement[2].transform.localPosition = new Vector3(-0.1517326f, .37f, Mathf.Lerp(0.65f, 0.915f, elapsed / duration));
                yield return null;
                elapsed += Time.deltaTime;
             }
