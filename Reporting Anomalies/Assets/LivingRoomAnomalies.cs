@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Kino;
 using Rnd = UnityEngine.Random;
 
 public class LivingRoomAnomalies : MonoBehaviour {
@@ -135,14 +134,15 @@ public class LivingRoomAnomalies : MonoBehaviour {
       switch (RandomAnomaly) {
          case 0:
             IntruderInit();
+            Mod.LogAnomalies(new string[] { "Wow Deaf, you are so cool for animating the Left 4 Dead 2 Tank!", "Sayori :(" }[IntruderSubType]);
             break;
          case 1:
             ExtraInit();
-            Mod.LogAnomalies(new string[] { "Rug", "Chair", "Tea set", "Wine bottle on cabinet", "Wine bottle in shelf" }[ExtraObj]);
+            Mod.LogAnomalies(new string[] { "Rug", "Chair", "Part of tea set", "Wine bottle on cabinet", "Wine bottle in shelf", "Ladle in sink", "Plate on counter" }[ExtraObj]);
             break;
          case 2:
             DisappearInit();
-            Mod.LogAnomalies(new string[] { "Hood", "Mug that you probably didn't see to begin with", "Blue pillow", "Coffee table that you probably didn't see to begin with", "Dining table", "Chair", "Ottoman", "Fasteners" }[DisObj]);
+            Mod.LogAnomalies(new string[] { "Hood", "Mug that you probably didn't see to begin with", "Blue pillow", "Coffee table that you probably didn't see to begin with", "Dining table", "Chair", "Ottoman", "Fasteners", "Butter knife" }[DisObj]);
             break;
          case 3:
             LightInit();
@@ -155,7 +155,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
             break;
          case 6:
             MoveInit();
-            Mod.LogAnomalies(new string[] { "Right couch", "Clock hands", "Outlets that you probably didn't see to begin with" }[MovedObject]);
+            Mod.LogAnomalies(new string[] { "Right couch", "Clock hands", "Outlets that you probably didn't see to begin with", "Pot", "Silverware" }[MovedObject]);
             break;
          case 7:
             PaintingInit();
@@ -168,8 +168,8 @@ public class LivingRoomAnomalies : MonoBehaviour {
 
    #region Intruder
 
-   public void IntruderInit () {
-      IntruderSubType = Rnd.Range(1, 2);
+   public void IntruderInit () { //REMEMBER TO MAKE THIS 0 TO LENGTH UPON FULL RELEASE
+      IntruderSubType = Rnd.Range(1, Intruder.Length);
       Intruder[IntruderSubType].SetActive(true);
       switch (IntruderSubType) {
          case 0:
@@ -367,7 +367,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
 
    public void MoveInit () {//-2.8
 
-      MovedObject = Rnd.Range(0, 3);
+      MovedObject = Rnd.Range(0, ObjectMovement.Length);
       //MovedObject = 2;
 
       StartCoroutine(ShowMove());
@@ -402,6 +402,20 @@ public class LivingRoomAnomalies : MonoBehaviour {
                elapsed += Time.deltaTime;
             }
             break;
+         case 3:
+            while (elapsed < duration) {
+               ObjectMovement[3].transform.localEulerAngles = new Vector3(0, 0, Mathf.Lerp(0, 90f, elapsed / duration));
+               yield return null;
+               elapsed += Time.deltaTime;
+            }
+            break;
+         case 4:
+            while (elapsed < duration) {
+               ObjectMovement[4].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(0, 180f, elapsed / duration), 0);
+               yield return null;
+               elapsed += Time.deltaTime;
+            }
+            break;
          default:
             yield return null;
             break;
@@ -428,6 +442,20 @@ public class LivingRoomAnomalies : MonoBehaviour {
          case 2:
             while (ObjectMovement[2].transform.localPosition.z < 0) {
                ObjectMovement[2].transform.localPosition = new Vector3(0, 0, Mathf.Lerp(-.4f, 0, elapsed / duration));
+               yield return null;
+               elapsed += Time.deltaTime;
+            }
+            break;
+         case 3:
+            while (elapsed < duration) {
+               ObjectMovement[3].transform.localEulerAngles = new Vector3(0, 0, Mathf.Lerp(90, 0f, elapsed / duration));
+               yield return null;
+               elapsed += Time.deltaTime;
+            }
+            break;
+         case 4:
+            while (elapsed < duration) {
+               ObjectMovement[4].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(180f, 0, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
             }

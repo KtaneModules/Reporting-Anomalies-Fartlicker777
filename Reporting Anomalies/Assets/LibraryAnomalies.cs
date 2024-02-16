@@ -29,6 +29,8 @@ public class LibraryAnomalies : MonoBehaviour {
 
    public GameObject Door;
 
+   bool ExtraDoor = false;
+
    public GameObject[] ObjectMovement;
    //bool PCMove;
    int MovedObject;
@@ -108,6 +110,9 @@ public class LibraryAnomalies : MonoBehaviour {
          if (i == 7) { //Library cannot have painting anomalies
             continue;
          }
+         else if (i == 4 && ExtraDoor) { //Prevents door opening if door is replaced.
+            continue;
+         }
          else if (i == 5 && Mod.BrokenCam != -1) { //Checks if there is a broken camera anywhere
             continue;
          }
@@ -127,7 +132,7 @@ public class LibraryAnomalies : MonoBehaviour {
       int RandomAnomaly = Rnd.Range(0, 9);
       do {
          RandomAnomaly = Rnd.Range(0, 9);
-      } while (ActiveAnomalies[RandomAnomaly] || RandomAnomaly == 7 || (Mod.BrokenCam != -1 && RandomAnomaly == 5));
+      } while (ActiveAnomalies[RandomAnomaly] || RandomAnomaly == 7 || (Mod.BrokenCam != -1 && RandomAnomaly == 5) || (RandomAnomaly == 4 && ExtraDoor));
 
       ActiveAnomalies[RandomAnomaly] = true;
 
@@ -141,15 +146,15 @@ public class LibraryAnomalies : MonoBehaviour {
             break;
          case 1:
             ExtraInit();
-            Mod.LogAnomalies(new string[] { "candle", "book", "chandelier", "sword", "door" }[ExtraObj]);
+            Mod.LogAnomalies(new string[] { "Candle", "Book", "Chandelier", "Sword", "Door", "Table" }[ExtraObj]);
             break;
          case 2:
             DisappearInit();
-            Mod.LogAnomalies(new string[] { "close bookshelf", "far bookshelf", "roof log" }[DisObj]);
+            Mod.LogAnomalies(new string[] { "Close bookshelf", "Far bookshelf", "Roof log" }[DisObj]);
             break;
          case 3:
             LightInit();
-            Mod.LogAnomalies(new string[] { "close chandelier", "far chandelier", "table candles" }[LightIndex]);
+            Mod.LogAnomalies(new string[] { "Close chandelier", "Far chandelier", "Table candles" }[LightIndex]);
             break;
          case 4:
             DoorInit();
@@ -159,7 +164,7 @@ public class LibraryAnomalies : MonoBehaviour {
             break;
          case 6:
             MoveInit();
-            Mod.LogAnomalies(new string[] { "book", "far candle", "fallen close chandelier", "fallen far chandelier", "rotated chandeliers"}[MovedObject]);
+            Mod.LogAnomalies(new string[] { "Book", "Far candle", "Fallen close chandelier", "Fallen far chandelier", "Rotated chandeliers"}[MovedObject]);
             break;
          case 7:
             PaintingInit();
@@ -209,13 +214,20 @@ public class LibraryAnomalies : MonoBehaviour {
    #region Extra Object
 
    public void ExtraInit () {
-      ExtraObj = Rnd.Range(0, ExtraObjects.Length);
+      do {
+         ExtraObj = Rnd.Range(0, ExtraObjects.Length); //Prevent the door opening while the door is replaced
+      } while (ActiveAnomalies[4] && ExtraObj == 4);
+      
       ExtraObjects[ExtraObj].SetActive(true);
+      if (ExtraObj == 4) {
+         ExtraDoor = true;
+      }
    }
 
    public void FixExtra () {
       ExtraObjects[ExtraObj].SetActive(false);
       ExtraObj = -1;
+      ExtraDoor = false;
    }
 
    #endregion

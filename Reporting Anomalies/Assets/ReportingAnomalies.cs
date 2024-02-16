@@ -69,7 +69,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public LibraryAnomalies Libr;
    public LivingRoomAnomalies Livi;
    public int BrokenCam = -1;
-   static int StaticCam = -1;
+   static int StaticCam = -1; //I genuinely cannot tell you what the point of this was. Probably has to do with multiple RAs
 
    int[] RoomChoosingOrder = { 0, 1, 2};
 
@@ -254,9 +254,10 @@ public class ReportingAnomalies : MonoBehaviour {
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
       yield return new WaitForSeconds(5f);
       //Libr.IntruderInit();
-      Bedr.IntruderInit();
-      yield return new WaitForSeconds(10f);
-      Bedr.FixIntruder();
+      //Bedr.IntruderInit();
+      //Bedr.MoveInit();
+      //yield return new WaitForSeconds(10f);
+      //Bedr.FixIntruder();
    }
 
    IEnumerator FixMaterialForMultipleRAs () {
@@ -322,7 +323,7 @@ public class ReportingAnomalies : MonoBehaviour {
       //RenderCameraMaterials();
    }
 
-   public void RenderCameraMaterials () {
+   public void RenderCameraMaterials () { //Makes sure that Unity isn't dumb and manually renders the camera for any anomalies. Essentially nullified with multiple RAs.
       for (int i = 0; i < 3; i++) {
          if (CamsToRender[i].gameObject.activeSelf) {
             CamsToRender[i].Render();
@@ -355,7 +356,7 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
 
-   void DeloadRooms () {
+   void DeloadRooms () { //Prevents a LOT of lag by not loading rooms unless they are looked at.
       if (!CanModuleOperate) {
          return;
       }
@@ -586,8 +587,13 @@ public class ReportingAnomalies : MonoBehaviour {
    #endregion
 
    void AnomalyInit () {
-
-      RoomChoosingOrder = RoomChoosingOrder.Shuffle();
+      /*
+       * Goes through each room and sees if it can make an anomaly.
+       * This basically prevents dumbfucks from creating an infinite
+       * loop that would happen if it tries to make an anomaly in a
+       * room that physically can't make any more anomalies.
+      */
+      RoomChoosingOrder = RoomChoosingOrder.Shuffle(); 
       bool MadeAnomaly = false;
 
       for (int i = 0; i < 3; i++) {
@@ -614,6 +620,9 @@ public class ReportingAnomalies : MonoBehaviour {
          if (MadeAnomaly) {
             break;
          }
+         if (i == 2 && !MadeAnomaly) {
+            Debug.LogFormat("[Reporting Anomalies #{0}] The ~~town~~ house is too ~~evil~~ anomalous to find ~~anyone good~~ create any more anomalies!", ModuleId); //le funny town of salem reference
+         }
       }
 
       StaticCam = BrokenCam;
@@ -631,15 +640,15 @@ public class ReportingAnomalies : MonoBehaviour {
 
    void Update () {
       BrokenCam = StaticCam;
-      if (CameraPos == BrokenCam) {
+      if (CameraPos == BrokenCam) { //If
          RightButton.OnInteract();
       }
 
-      if (ModuleSolved || !WaitForModCount) {
+      if (ModuleSolved || !WaitForModCount) { //Makes sure that all mods are actually counted
          return;
       }
 
-      if (ModuleSolvedStatic) {
+      if (ModuleSolvedStatic) { //Solves all Reporting Anomalies simultaneously when the real one solves
          Solve();
       }
 
@@ -648,7 +657,7 @@ public class ReportingAnomalies : MonoBehaviour {
       }
 
       int Ignored = 0;
-      for (int i = 0; i < Bomb.GetSolvableModuleNames().Count(); i++) {
+      for (int i = 0; i < Bomb.GetSolvableModuleNames().Count(); i++) { 
          if (ignoredModules.Contains(Bomb.GetSolvableModuleNames()[i])) {
             Ignored++;
          }
@@ -669,7 +678,7 @@ public class ReportingAnomalies : MonoBehaviour {
             AnomalyInit();
          }
       }
-      if (ActiveAnomalies == 3 && !FirstTimeThreeAnomalies) {
+      if (ActiveAnomalies == 3 && !FirstTimeThreeAnomalies) { //If there are three anomalies active, it plays a one time warning
          if (!PlayingIntro) {
             StartCoroutine(Warning());
          }

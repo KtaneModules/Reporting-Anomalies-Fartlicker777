@@ -1,0 +1,153 @@
+fileFormatVersion: 2
+guid: dea954206740abe49af8dc75b1c85780
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Active Camera
+    100002: coffee
+    100004: coffee 1
+    100006: coffee 10
+    100008: coffee 11
+    100010: coffee 2
+    100012: coffee 3
+    100014: coffee 4
+    100016: coffee 5
+    100018: coffee 6
+    100020: coffee 7
+    100022: coffee 8
+    100024: coffee 9
+    100026: Default
+    100028: //RootNode
+    400000: Active Camera
+    400002: coffee
+    400004: coffee 1
+    400006: coffee 10
+    400008: coffee 11
+    400010: coffee 2
+    400012: coffee 3
+    400014: coffee 4
+    400016: coffee 5
+    400018: coffee 6
+    400020: coffee 7
+    400022: coffee 8
+    400024: coffee 9
+    400026: Default
+    400028: //RootNode
+    2000000: Active Camera
+    2100000: 'Iron Rough #3'
+    2100002: Hard Rough Plastic Black
+    2100004: Brass Textured
+    2100006: Steel Rough
+    2300000: coffee 1
+    2300002: coffee 10
+    2300004: coffee 11
+    2300006: coffee 2
+    2300008: coffee 3
+    2300010: coffee 4
+    2300012: coffee 5
+    2300014: coffee 6
+    2300016: coffee 7
+    2300018: coffee 8
+    2300020: coffee 9
+    3300000: coffee 1
+    3300002: coffee 10
+    3300004: coffee 11
+    3300006: coffee 2
+    3300008: coffee 3
+    3300010: coffee 4
+    3300012: coffee 5
+    3300014: coffee 6
+    3300016: coffee 7
+    3300018: coffee 8
+    3300020: coffee 9
+    4300000: coffee
+    4300002: coffee
+    4300004: coffee
+    4300006: coffee
+    4300008: coffee
+    4300010: coffee
+    4300012: coffee
+    4300014: coffee
+    4300016: coffee
+    4300018: coffee
+    4300020: coffee
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

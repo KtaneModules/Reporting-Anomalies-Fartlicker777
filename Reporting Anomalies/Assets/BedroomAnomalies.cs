@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Rnd = UnityEngine.Random;
-using Kino;
 
 public class BedroomAnomalies : MonoBehaviour {
 
    public Camera Cam;
    public DigitalGlitch GlitchEffect;
    public SpriteRenderer BlackSquare;
+
+   public GameObject[] Marlboros;
 
    Coroutine Blackness;
 
@@ -17,6 +18,7 @@ public class BedroomAnomalies : MonoBehaviour {
    public ReportingAnomalies Mod;
 
    public GameObject[] Intruder;
+   int RandIntruder;
 
    public GameObject[] ExtraObjects;
    int ExtraObj;
@@ -119,10 +121,11 @@ public class BedroomAnomalies : MonoBehaviour {
       switch (RandomAnomaly) {
          case 0:
             IntruderInit();
+            Mod.LogAnomalies(new string[] { "Fredy fabore", "Phantom Marionette" }[RandIntruder]);
             break;
          case 1:
             ExtraInit();
-            Mod.LogAnomalies(new string[] { "Trash Bin", "Newton's Cradle", "Thing crammed in desk", "Water bottle left of computer", "Paper stack", "Water bottle on computer"}[ExtraObj]);
+            Mod.LogAnomalies(new string[] { "Trash Bin", "Newton's Cradle", "Thing crammed in desk", "Water bottle left of computer", "Paper stack", "Water bottle on computer", "Marlboro" }[ExtraObj]);
             break;
          case 2:
             DisappearInit();
@@ -139,7 +142,7 @@ public class BedroomAnomalies : MonoBehaviour {
             break;
          case 6:
             MoveInit();
-            Mod.LogAnomalies(new string[] { "Chair", "Bed", "Paper box"}[MovedObject]);
+            Mod.LogAnomalies(new string[] { "Chair", "Bed", "Paper box", "Tissue box" }[MovedObject]);
             break;
          case 7:
             PaintingInit();
@@ -156,7 +159,7 @@ public class BedroomAnomalies : MonoBehaviour {
    #region Intruder
 
    public void IntruderInit () {
-      int RandIntruder = Rnd.Range(1, Intruder.Length);
+      RandIntruder = Rnd.Range(1, Intruder.Length); //REMEMBER TO MAKE THIS 0 TO LENGTH UPON FULL RELEASE
       Intruder[RandIntruder].SetActive(true);
       switch (RandIntruder) {
          case 0:
@@ -215,7 +218,7 @@ public class BedroomAnomalies : MonoBehaviour {
             yield return null;
             elapsed += Time.deltaTime;
          }
-         
+
          elapsed = 0f;
          yield return new WaitForSeconds(.5f);
          while (elapsed < duration) {
@@ -281,7 +284,17 @@ public class BedroomAnomalies : MonoBehaviour {
 
    public void ExtraInit () {
       ExtraObj = Rnd.Range(0, ExtraObjects.Length);
+      //ExtraObj = 6;
       ExtraObjects[ExtraObj].SetActive(true);
+      if (ExtraObj == 6) {
+         BRINGFORTHTHEMARLBORO();
+      }
+   }
+
+   void BRINGFORTHTHEMARLBORO () { //BRINGFORTHTHEMARLBORO
+      foreach (var Marlboro in Marlboros) {
+         Marlboro.transform.Rotate(new Vector3(Rnd.Range(0, 360f), Rnd.Range(0, 360f), Rnd.Range(0, 360f)));
+      }
    }
 
    public void FixExtra () {
@@ -411,7 +424,7 @@ public class BedroomAnomalies : MonoBehaviour {
                yield return null;
                elapsed += Time.deltaTime;
             }
-            
+
             break;
          case 1:
             while (elapsed < duration) {
@@ -428,8 +441,16 @@ public class BedroomAnomalies : MonoBehaviour {
                elapsed += Time.deltaTime;
             }
             break;
+         case 3:
+            while (elapsed < duration) {
+               ObjectMovement[3].transform.localPosition = new Vector3(Mathf.Lerp(0.35f, -0.07f, elapsed / duration), 1.51f, -0.14f);
+               yield return null;
+               elapsed += Time.deltaTime;
+            }
+            break;
+         
          default:
-            
+
             yield return null;
             break;
       }
@@ -458,9 +479,16 @@ public class BedroomAnomalies : MonoBehaviour {
                elapsed += Time.deltaTime;
             }
             break;
-            case 2:
+         case 2:
             while (elapsed < duration) {
                ObjectMovement[2].transform.localPosition = new Vector3(-0.1517326f, .37f, Mathf.Lerp(0.65f, 0.915f, elapsed / duration));
+               yield return null;
+               elapsed += Time.deltaTime;
+            }
+            break;
+         case 3:
+            while (elapsed < duration) {
+               ObjectMovement[3].transform.localPosition = new Vector3(Mathf.Lerp(-0.07f, 0.35f, elapsed / duration), 1.51f, -0.14f);
                yield return null;
                elapsed += Time.deltaTime;
             }
