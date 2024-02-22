@@ -38,7 +38,7 @@ public class LibraryAnomalies : MonoBehaviour {
    //public GameObject[] FakeMovements;
    //public Vector3[] StartingMovementVals = new Vector3[3];
 
-   //public GameObject[] PosterAnomaly;
+   public GameObject[] PosterAnomaly;
    //int TypeOfPainting;
 
    public GameObject Abyss;
@@ -107,10 +107,7 @@ public class LibraryAnomalies : MonoBehaviour {
    public bool DoesItSoftlock () {
 
       for (int i = 0; i < 9; i++) { //Goes through the anomalies in the order { "Intruder", "Extra Object", "Object Disappearance", "Light", "Door Opening", "Camera Malfunction", "Object Movement", "Painting", "Abyss Presence" };
-         if (i == 7) { //Library cannot have painting anomalies
-            continue;
-         }
-         else if (i == 4 && ExtraDoor) { //Prevents door opening if door is replaced.
+         if (i == 4 && ExtraDoor) { //Prevents door opening if door is replaced.
             continue;
          }
          else if (i == 5 && Mod.BrokenCam != -1) { //Checks if there is a broken camera anywhere
@@ -132,7 +129,7 @@ public class LibraryAnomalies : MonoBehaviour {
       int RandomAnomaly = Rnd.Range(0, 9);
       do {
          RandomAnomaly = Rnd.Range(0, 9);
-      } while (ActiveAnomalies[RandomAnomaly] || RandomAnomaly == 7 || (Mod.BrokenCam != -1 && RandomAnomaly == 5) || (RandomAnomaly == 4 && ExtraDoor));
+      } while (ActiveAnomalies[RandomAnomaly] || (Mod.BrokenCam != -1 && RandomAnomaly == 5) || (RandomAnomaly == 4 && ExtraDoor));
 
       ActiveAnomalies[RandomAnomaly] = true;
 
@@ -146,11 +143,11 @@ public class LibraryAnomalies : MonoBehaviour {
             break;
          case 1:
             ExtraInit();
-            Mod.LogAnomalies(new string[] { "Candle", "Book", "Chandelier", "Sword", "Door", "Table" }[ExtraObj]);
+            Mod.LogAnomalies(new string[] { "Candle", "Book", "Chandelier", "Sword", "Door", "Table", "Books", "Typewriter" }[ExtraObj]);
             break;
          case 2:
             DisappearInit();
-            Mod.LogAnomalies(new string[] { "Close bookshelf", "Far bookshelf", "Roof log" }[DisObj]);
+            Mod.LogAnomalies(new string[] { "Close bookshelf", "Far bookshelf", "Roof log", "Window", "Radio", "Books on bookshelf", "Pillars", "Candle", "Bench"}[DisObj]);
             break;
          case 3:
             LightInit();
@@ -164,7 +161,7 @@ public class LibraryAnomalies : MonoBehaviour {
             break;
          case 6:
             MoveInit();
-            Mod.LogAnomalies(new string[] { "Book", "Far candle", "Fallen close chandelier", "Fallen far chandelier", "Rotated chandeliers"}[MovedObject]);
+            Mod.LogAnomalies(new string[] { "Book", "Far candle", "Fallen close chandelier", "Fallen far chandelier", "Rotated chandeliers", "Flipped bookshelf"}[MovedObject]);
             break;
          case 7:
             PaintingInit();
@@ -305,13 +302,17 @@ public class LibraryAnomalies : MonoBehaviour {
    #region Painting
 
    public void PaintingInit () {
-      Debug.Log("A PAINTING ANOMALY HAS OCCURED IN LIBRARY. AUTOMATICALLY SOLVING.");
-      Mod.Solve();
+      /*Debug.Log("A PAINTING ANOMALY HAS OCCURED IN LIBRARY. AUTOMATICALLY SOLVING.");
+      Mod.Solve();*/
+      PosterAnomaly[0].SetActive(false);
+      PosterAnomaly[1].SetActive(true);
    }
 
    public void FixPainting () {
-      Debug.Log("A PAINTING ANOMALY HAS BEEN FIXED IN LIBRARY SOMEHOW. AUTOMATICALLY SOLVING.");
-      Mod.Solve();
+      /*Debug.Log("A PAINTING ANOMALY HAS BEEN FIXED IN LIBRARY SOMEHOW. AUTOMATICALLY SOLVING.");
+      Mod.Solve();*/
+      PosterAnomaly[1].SetActive(false);
+      PosterAnomaly[0].SetActive(true);
    }
 
    #endregion
@@ -319,8 +320,8 @@ public class LibraryAnomalies : MonoBehaviour {
    #region Object Movement
 
    public void MoveInit () {
-      MovedObject = Rnd.Range(0, ObjectMovement.Length + 1);
-      MovedObject = 2;
+      MovedObject = Rnd.Range(0, ObjectMovement.Length);
+      MovedObject = 5;
       /*do {
          MovedObject = Rnd.Range(0, 3);
       } while ((PCDis && MovedObject == 1) || (PCMove && MovedObject == 2));
@@ -342,7 +343,7 @@ public class LibraryAnomalies : MonoBehaviour {
       var duration = .25f;
       var elapsed = 0f;
       switch (MovedObject) {
-         case 0:
+         case 0: //Book on close table
             From = ObjectMovement[0].transform.localPosition.z;
             To = -28.61f;
             while (elapsed < duration) {
@@ -352,7 +353,7 @@ public class LibraryAnomalies : MonoBehaviour {
             }
             
             break;
-         case 1:
+         case 1: //Candle
 
             From = ObjectMovement[0].transform.localPosition.z;
             To = -30.46f;
@@ -363,7 +364,7 @@ public class LibraryAnomalies : MonoBehaviour {
                elapsed += Time.deltaTime;
             }
             break;
-         case 2:
+         case 2: //Chandelier 1
 
             
 
@@ -380,7 +381,7 @@ public class LibraryAnomalies : MonoBehaviour {
 
             //Debug.Log(ObjectMovement[2].transform.localPosition.y);
             break;
-         case 3:
+         case 3: //Chandelier 2
 
             duration = .15f;
             From = 5.019f;
@@ -395,7 +396,7 @@ public class LibraryAnomalies : MonoBehaviour {
 
             break;
 
-         case 4:
+         /*case 4: //No idea what the fuck this was supposed to be
 
             From = ObjectMovement[0].transform.localRotation.x;
             To = -63.549f;
@@ -407,9 +408,9 @@ public class LibraryAnomalies : MonoBehaviour {
                elapsed += Time.deltaTime;
             }
 
-            break;
+            break;*/
 
-         case 5:
+         case 4: //Rotated chandeliers
 
             From = 0;
             To = 90f;
@@ -418,9 +419,26 @@ public class LibraryAnomalies : MonoBehaviour {
                //ObjectMovement[2].transform.localPosition = new Vector3(Mathf.Lerp(-.39f, 0.17f, elapsed / duration), 0.04f, Mathf.Lerp(-6.853f, -6.45f, elapsed / duration));
                ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(From, To, elapsed / duration), 0);
                ObjectMovement[3].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(From, To, elapsed / duration), 0);
+               ObjectMovement[4].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(From, To, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
             }
+
+            break;
+
+         case 5:
+
+            From = 0;
+            To = 180f;
+
+            while (elapsed < duration) {
+               //ObjectMovement[2].transform.localPosition = new Vector3(Mathf.Lerp(-.39f, 0.17f, elapsed / duration), 0.04f, Mathf.Lerp(-6.853f, -6.45f, elapsed / duration));
+               ObjectMovement[5].transform.localEulerAngles = new Vector3(0, 180, Mathf.Lerp(From, To, elapsed / duration));
+               yield return null;
+               elapsed += Time.deltaTime;
+            }
+
+            ObjectMovement[5].transform.localEulerAngles = new Vector3(0, 180f, 180f);
 
             break;
 
@@ -479,7 +497,9 @@ public class LibraryAnomalies : MonoBehaviour {
 
             while (elapsed < duration) {
                //ObjectMovement[2].transform.localPosition = new Vector3(Mathf.Lerp(-.39f, 0.17f, elapsed / duration), 0.04f, Mathf.Lerp(-6.853f, -6.45f, elapsed / duration));
-               ObjectMovement[4].transform.localEulerAngles = new Vector3(Mathf.Lerp(To, From, elapsed / duration), -180, 0);
+               ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(To, From, elapsed / duration), 0);
+               ObjectMovement[3].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(To, From, elapsed / duration), 0);
+               ObjectMovement[4].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(To, From, elapsed / duration), 0);
                yield return null;
                elapsed += Time.deltaTime;
             }
@@ -490,11 +510,12 @@ public class LibraryAnomalies : MonoBehaviour {
 
             while (elapsed < duration) {
                //ObjectMovement[2].transform.localPosition = new Vector3(Mathf.Lerp(-.39f, 0.17f, elapsed / duration), 0.04f, Mathf.Lerp(-6.853f, -6.45f, elapsed / duration));
-               ObjectMovement[2].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(To, From, elapsed / duration), 0);
-               ObjectMovement[3].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(To, From, elapsed / duration), 0);
+               ObjectMovement[5].transform.localEulerAngles = new Vector3(0, 180, Mathf.Lerp(To, From, elapsed / duration));
                yield return null;
                elapsed += Time.deltaTime;
             }
+
+            ObjectMovement[5].transform.localEulerAngles = new Vector3(0, 180, 0);
 
             break;
       }

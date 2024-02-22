@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rnd = UnityEngine.Random;
 
+/*
+ * NOTE TO SELF FOR ANOMALY TO ADD:
+ * MAKE THE FLOOR SLOWLY ROTATE ABOUT THE Y AXIS OVER TIME
+ */
+
 public class BedroomAnomalies : MonoBehaviour {
 
    public Camera Cam;
@@ -35,6 +40,8 @@ public class BedroomAnomalies : MonoBehaviour {
    bool PCMove;
    int MovedObject;
    bool BedMove;
+
+   Coroutine FloorMoving;
    //public GameObject[] FakeMovements;
    //public Vector3[] StartingMovementVals = new Vector3[3];
 
@@ -142,7 +149,7 @@ public class BedroomAnomalies : MonoBehaviour {
             break;
          case 6:
             MoveInit();
-            Mod.LogAnomalies(new string[] { "Chair", "Bed", "Paper box", "Tissue box" }[MovedObject]);
+            Mod.LogAnomalies(new string[] { "Chair", "Bed", "Paper box", "Tissue box", "Floor" }[MovedObject]);
             break;
          case 7:
             PaintingInit();
@@ -408,10 +415,29 @@ public class BedroomAnomalies : MonoBehaviour {
 
    public void MoveInit () {
       MovedObject = Rnd.Range(0, ObjectMovement.Length);
-
-      StartCoroutine(ShowMove());
+      MovedObject = 4;
+      if (MovedObject < 4) {
+         StartCoroutine(ShowMove());
+      }
+      else {
+         FloorMoving = StartCoroutine(RotateFloor());
+      }
+      
       //ObjectMovement[MovedObject].SetActive(false);
       //FakeMovements[MovedObject].SetActive(true);
+   }
+
+   public IEnumerator RotateFloor () {
+      var duration = 720f;
+      var elapsed = 0f;
+      while (true) {
+         while (elapsed < duration) {
+            ObjectMovement[4].transform.localEulerAngles = new Vector3(0, Mathf.Lerp(0, 360f, elapsed / duration), 0);
+            yield return null;
+            elapsed += Time.deltaTime;
+         }
+         elapsed = 0f;
+      }
    }
 
    public IEnumerator ShowMove () {

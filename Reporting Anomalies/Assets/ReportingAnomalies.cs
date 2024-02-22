@@ -55,6 +55,8 @@ public class ReportingAnomalies : MonoBehaviour {
    public TextMesh NowViewingText;
    string[] RoomNames = { "Bedroom", "Library", "Living Room" };
 
+   public GameObject[] Books;
+
    float[][] ToppinsHeight = {
       new float[] { 2.301f, 1.860f, 1.419f, 0.979f, 0.537f }, //Mushroom
       new float[] { 2.287f, 1.849f, 1.407f, 0.965f, 0.521f }, //Cheese
@@ -71,7 +73,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public int BrokenCam = -1;
    static int StaticCam = -1; //I genuinely cannot tell you what the point of this was. Probably has to do with multiple RAs
 
-   int[] RoomChoosingOrder = { 0, 1, 2};
+   int[] RoomChoosingOrder = { 0, 1, 2 };
 
    public int RoomLocation = -1;
    public int AnomalyType = -1;
@@ -240,6 +242,10 @@ public class ReportingAnomalies : MonoBehaviour {
          }
       }
 
+      for (int i = 0; i < Books.Length; i++) {
+         Books[i].transform.localEulerAngles = new Vector3(0, Rnd.Range(0, 360f));
+      }
+
       AnomalyRNG = Rnd.Range(30, 41);
       Debug.LogFormat("[Reporting Anomalies #{0}] Anomalies have a {1}% chance of appearing.", ModuleId, AnomalyRNG);
       Menu.SetActive(false);
@@ -253,8 +259,10 @@ public class ReportingAnomalies : MonoBehaviour {
 
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
       yield return new WaitForSeconds(5f);
-      //Libr.IntruderInit();
+      //Bedr.MoveInit();
+      yield return new WaitForSeconds(3f);
       //Bedr.IntruderInit();
+      //Libr.FixMove();
       //Bedr.MoveInit();
       //yield return new WaitForSeconds(10f);
       //Bedr.FixIntruder();
@@ -593,7 +601,7 @@ public class ReportingAnomalies : MonoBehaviour {
        * loop that would happen if it tries to make an anomaly in a
        * room that physically can't make any more anomalies.
       */
-      RoomChoosingOrder = RoomChoosingOrder.Shuffle(); 
+      RoomChoosingOrder = RoomChoosingOrder.Shuffle();
       bool MadeAnomaly = false;
 
       for (int i = 0; i < 3; i++) {
@@ -657,7 +665,7 @@ public class ReportingAnomalies : MonoBehaviour {
       }
 
       int Ignored = 0;
-      for (int i = 0; i < Bomb.GetSolvableModuleNames().Count(); i++) { 
+      for (int i = 0; i < Bomb.GetSolvableModuleNames().Count(); i++) {
          if (ignoredModules.Contains(Bomb.GetSolvableModuleNames()[i])) {
             Ignored++;
          }
