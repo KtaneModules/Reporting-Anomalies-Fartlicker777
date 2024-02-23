@@ -415,7 +415,7 @@ public class BedroomAnomalies : MonoBehaviour {
 
    public void MoveInit () {
       MovedObject = Rnd.Range(0, ObjectMovement.Length);
-      MovedObject = 4;
+      //MovedObject = 4;
       if (MovedObject < 4) {
          StartCoroutine(ShowMove());
       }
@@ -528,6 +528,7 @@ public class BedroomAnomalies : MonoBehaviour {
 
    public void FixMove () {
       StartCoroutine(FixMoveAnim());
+      StopCoroutine(FloorMoving);
       MovedObject = -1;
       BedMove = false;
       PCMove = false;

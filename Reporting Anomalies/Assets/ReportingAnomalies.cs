@@ -131,7 +131,7 @@ public class ReportingAnomalies : MonoBehaviour {
    private static bool ModuleSolvedStatic;
 
    static int RACount;
-   static int[] ViewingRooms = new int[3];
+   static bool[] ViewingRooms = new bool[] { false, false, false};
 
    bool NoModsLeft;
 
@@ -228,7 +228,7 @@ public class ReportingAnomalies : MonoBehaviour {
 
    void Start () {
       WaitForModCount = true;
-      ViewingRooms[0]++;
+      ViewingRooms[0] = true;
       LoadingScreen.SetActive(false);
       if (!CanModuleOperate) {
          return;
@@ -259,8 +259,12 @@ public class ReportingAnomalies : MonoBehaviour {
 
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
       yield return new WaitForSeconds(5f);
+      //Libr.AbyssInit();
       //Bedr.MoveInit();
+      //Bedr.MoveInit();
+      yield return new WaitForSeconds(5f);
       yield return new WaitForSeconds(3f);
+      //Libr.FixAbyss();
       //Bedr.IntruderInit();
       //Libr.FixMove();
       //Bedr.MoveInit();
@@ -285,7 +289,7 @@ public class ReportingAnomalies : MonoBehaviour {
    void OnDestroy () {
       FirstRAPresent = false;
       ModuleSolvedStatic = false;
-      ViewingRooms = new int[3];
+      ViewingRooms = new bool[3];
       StaticCam = -1;
       Cursor.visible = true;
       RACount = 0;
@@ -301,14 +305,14 @@ public class ReportingAnomalies : MonoBehaviour {
    #region Buttons
 
    void LeftPress () {
-      ViewingRooms[CameraPos]--;
+      ViewingRooms[CameraPos] = false;
       CameraPos--;
       CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
-      ViewingRooms[CameraPos]++;
       if (BrokenCam == CameraPos) {
          CameraPos--;
          CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
       }
+      ViewingRooms[CameraPos] = true;
       Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
       NowViewingText.text = RoomNames[CameraPos];
       DeloadRooms();
@@ -317,14 +321,14 @@ public class ReportingAnomalies : MonoBehaviour {
 
    void RightPress () {
 
-      ViewingRooms[CameraPos]--;
+      ViewingRooms[CameraPos] = false;
       CameraPos++;
       CameraPos %= CameraMats.Length;
-      ViewingRooms[CameraPos]++;
       if (BrokenCam == CameraPos) {
          CameraPos++;
          CameraPos %= CameraMats.Length;
       }
+      ViewingRooms[CameraPos] = true;
       Screen.GetComponent<MeshRenderer>().material = CameraMats[CameraPos];
       NowViewingText.text = RoomNames[CameraPos];
       DeloadRooms();
@@ -374,7 +378,7 @@ public class ReportingAnomalies : MonoBehaviour {
       Debug.Log(ViewingRooms[2]);*/
 
       for (int i = 0; i < Rooms.Length; i++) {
-         if (ViewingRooms[i] == 0) {
+         if (!ViewingRooms[i]) {
             Rooms[i].SetActive(false);
          }
          else {
@@ -648,6 +652,7 @@ public class ReportingAnomalies : MonoBehaviour {
 
    void Update () {
       BrokenCam = StaticCam;
+      DeloadRooms();
       RenderCameraMaterials();
       if (CameraPos == BrokenCam) { //If
          RightButton.OnInteract();

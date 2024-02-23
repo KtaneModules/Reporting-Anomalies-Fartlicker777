@@ -18,8 +18,6 @@ public class LivingRoomAnomalies : MonoBehaviour {
    * ~~Abyss~~
    */
 
-   public GameObject[] Lights;
-
    public AnalogGlitch GlitchEffect;
 
    public AudioSource[] Music;
@@ -261,16 +259,16 @@ public class LivingRoomAnomalies : MonoBehaviour {
    public void LightInit () {
       //Debug.Log("A LIGHT ANOMALY HAS OCCURED IN LIVING ROOM. AUTOMATICALLY SOLVING.");
       //Mod.Solve();
-      for (int i = 0; i < Lights.Length; i++) {
-         Lights[i].SetActive(false);
+      for (int i = 0; i < LightAnomaly.Length; i++) {
+         LightAnomaly[i].SetActive(false);
       }
    }
 
    public void FixLight () {
       //Debug.Log("A LIGHT ANOMALY HAS BEEN FIXED IN LIVING ROOM SOMEHOW. AUTOMATICALLY SOLVING.");
       //Mod.Solve();
-      for (int i = 0; i < Lights.Length; i++) {
-         Lights[i].SetActive(true);
+      for (int i = 0; i < LightAnomaly.Length; i++) {
+         LightAnomaly[i].SetActive(true);
       }
    }
 
