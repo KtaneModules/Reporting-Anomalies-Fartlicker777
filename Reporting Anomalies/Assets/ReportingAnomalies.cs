@@ -648,6 +648,7 @@ public class ReportingAnomalies : MonoBehaviour {
 
    void Update () {
       BrokenCam = StaticCam;
+      RenderCameraMaterials();
       if (CameraPos == BrokenCam) { //If
          RightButton.OnInteract();
       }
@@ -696,6 +697,18 @@ public class ReportingAnomalies : MonoBehaviour {
          NoModsLeft = true;
          AnomalyInit(); //Guarantees one spawned anomaly at the end
          Debug.LogFormat("[Reporting Anomalies #{0}] All other non-ignored solvables have been solved. Production of anomalies has been shut down. There {1} {2} remaining active {3}.", ModuleId, ActiveAnomalies == 1 ? "is" : "are", ActiveAnomalies, ActiveAnomalies == 1 ? "anomaly" : "anomalies");
+         Debug.LogFormat("[Reporting Anomalies #{0}] They are:", ModuleId);
+         for (int i = 0; i < 9; i++) {
+            if (Bedr.ActiveAnomalies[i]) {
+               Debug.LogFormat("[Reporting Anomalies #{0}] A {1} anomaly in the {2}.", ModuleId, AnomalyTypesStr[i], Rnd.Range(0, 100) == 99 ? "breeding room" : "bedroom");
+            }
+            if (Libr.ActiveAnomalies[i]) {
+               Debug.LogFormat("[Reporting Anomalies #{0}] A {1} anomaly in the {2}.", ModuleId, AnomalyTypesStr[i], Rnd.Range(0, 100) == 99 ? "liberal room" : "library");
+            }
+            if (Livi.ActiveAnomalies[i]) {
+               Debug.LogFormat("[Reporting Anomalies #{0}] A {1} anomaly in the {2}.", ModuleId, AnomalyTypesStr[i], Rnd.Range(0, 100) == 99 ? "SCP-002" : "living room");
+            }
+         }
       }
       if (SolveCount >= ModCount && ActiveAnomalies == 0) {
          //Debug.Log(SolveCount);

@@ -147,7 +147,7 @@ public class LibraryAnomalies : MonoBehaviour {
             break;
          case 2:
             DisappearInit();
-            Mod.LogAnomalies(new string[] { "Close bookshelf", "Far bookshelf", "Roof log", "Window", "Radio", "Books on bookshelf", "Pillars", "Candle", "Bench"}[DisObj]);
+            Mod.LogAnomalies(new string[] { "Close bookshelf", "Far bookshelf", "Roof log", "Piano bench", "Window", "Radio", "Books on bookshelf", "Pillars", "Candle", "Bench"}[DisObj]);
             break;
          case 3:
             LightInit();
