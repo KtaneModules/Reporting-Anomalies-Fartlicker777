@@ -166,7 +166,7 @@ public class BedroomAnomalies : MonoBehaviour {
    #region Intruder
 
    public void IntruderInit () {
-      RandIntruder = Rnd.Range(1, Intruder.Length); //REMEMBER TO MAKE THIS 0 TO LENGTH UPON FULL RELEASE
+      RandIntruder = Rnd.Range(0, Intruder.Length); //REMEMBER TO MAKE THIS 0 TO LENGTH UPON FULL RELEASE
       Intruder[RandIntruder].SetActive(true);
       switch (RandIntruder) {
          case 0:

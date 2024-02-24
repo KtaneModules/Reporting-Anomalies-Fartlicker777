@@ -14,7 +14,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public KMBombInfo Bomb;
    public KMAudio Audio;
 
-   public bool DEBUGMODEACTIVE = true;
+   public bool DEBUGMODEACTIVE = false;
 
    public static string[] ignoredModules = null;
 
@@ -121,6 +121,10 @@ public class ReportingAnomalies : MonoBehaviour {
 
    int AnomalyRNG;
 
+   int AnomalyRNGLowerBound = 30;
+   int AnomalyRNGUpperBound = 41;
+   bool ModifiedAnomalyRNG = false;
+
    //Coroutine PSBScreen;
    Coroutine Flash;
 
@@ -145,6 +149,41 @@ public class ReportingAnomalies : MonoBehaviour {
          ReportButton.gameObject.SetActive(false);
       }
       FirstRAPresent = true;
+
+      string missionDesc = KTMissionGetter.Mission.Description;
+      if (missionDesc != null) {
+         Regex regex = new Regex(@"(\[)(Reporting Anomalies)(\s)(\d{1,3})(%)?(,)(\s)*(\d{1,3})(%)?(\])"); // Valid string would look something like "[Reporting Anomalies] 10%, 93%"
+         var match = regex.Match(missionDesc);
+         if (match.Success) {
+            string matchstr = match.ToString().Replace(" ",""); //Removes spaces from the valid set to make indexing easier
+            Debug.Log(matchstr);
+
+            int length = matchstr.IndexOf('%');
+
+            int LowerBound = int.Parse(matchstr.Substring(19, length - 19)); //19 when the first number would appear in "[REPORTINGANOMALIES10%,93%]";
+            Debug.Log(LowerBound);
+            //                                                                                                           012345678901234567890123456
+            length = matchstr.LastIndexOf('%');
+            Debug.Log(matchstr.IndexOf(',') + 1);
+            Debug.Log(length);
+            Debug.Log(matchstr.Substring(matchstr.IndexOf(',') + 1, length - (matchstr.IndexOf('%') + 2)));
+            int UpperBound = int.Parse(matchstr.Substring(matchstr.IndexOf(',') + 1, length - matchstr.IndexOf('%') + 2)); //Has to start from first % since it can be a 1-3 digit number.
+            Debug.Log(UpperBound);
+
+            if (LowerBound > UpperBound) { //Makes sure lower and upper bounds are truly lower and upper
+               int temp = LowerBound;
+               LowerBound = UpperBound;
+               UpperBound = temp;
+            }
+            if (UpperBound > 100) { //Maxes at 100 just so it looks nicer in log
+               UpperBound = 100;
+            }
+            if (LowerBound == UpperBound) { //Prevents the Rng.Range(x, x) bug that happened in Challenge and Contact that one time
+               UpperBound++;
+            }
+            ModifiedAnomalyRNG = true;
+         }
+      }
 
       WarningSystem.SetActive(false);
 
@@ -246,7 +285,11 @@ public class ReportingAnomalies : MonoBehaviour {
          Books[i].transform.localEulerAngles = new Vector3(0, Rnd.Range(0, 360f));
       }
 
-      AnomalyRNG = Rnd.Range(30, 41);
+      AnomalyRNG = Rnd.Range(AnomalyRNGLowerBound, AnomalyRNGUpperBound);
+      if (ModifiedAnomalyRNG) {
+         Debug.LogFormat("[Reporting Anomalies #{0}] The mission you are playing has altered the RNG of anomalies appearing. The range of the frequency of anomalies is from {1}% to {2}%", ModuleId, AnomalyRNGLowerBound, AnomalyRNGUpperBound);
+      }
+      
       Debug.LogFormat("[Reporting Anomalies #{0}] Anomalies have a {1}% chance of appearing.", ModuleId, AnomalyRNG);
       Menu.SetActive(false);
       DeloadRooms();
@@ -258,18 +301,10 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    IEnumerator Test () { //If I want to test an anomaly/anything for a bug
+      
       yield return new WaitForSeconds(5f);
-      //Libr.AbyssInit();
-      //Bedr.MoveInit();
-      //Bedr.MoveInit();
-      yield return new WaitForSeconds(5f);
-      yield return new WaitForSeconds(3f);
-      //Libr.FixAbyss();
-      //Bedr.IntruderInit();
-      //Libr.FixMove();
-      //Bedr.MoveInit();
-      //yield return new WaitForSeconds(10f);
-      //Bedr.FixIntruder();
+
+      yield return new WaitForSeconds(8f);
    }
 
    IEnumerator FixMaterialForMultipleRAs () {

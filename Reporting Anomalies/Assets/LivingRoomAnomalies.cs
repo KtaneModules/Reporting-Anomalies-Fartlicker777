@@ -167,7 +167,7 @@ public class LivingRoomAnomalies : MonoBehaviour {
    #region Intruder
 
    public void IntruderInit () { //REMEMBER TO MAKE THIS 0 TO LENGTH UPON FULL RELEASE
-      IntruderSubType = Rnd.Range(1, Intruder.Length);
+      IntruderSubType = Rnd.Range(0, Intruder.Length);
       Intruder[IntruderSubType].SetActive(true);
       switch (IntruderSubType) {
          case 0:

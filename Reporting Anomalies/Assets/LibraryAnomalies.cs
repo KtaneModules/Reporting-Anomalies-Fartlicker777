@@ -5,15 +5,18 @@ using Rnd = UnityEngine.Random;
 
 public class LibraryAnomalies : MonoBehaviour {
 
-   public AudioSource Music;
+   public AudioSource[] Music;
 
    public ReportingAnomalies Mod;
 
    public bool CanMakeAnomalies;
 
-   public SpriteRenderer Intruder;
+   public SpriteRenderer[] Intruder;
 
    public Sprite[] SpaceBoyfriend;
+   public Sprite[] SpamtonGSpamton;
+   int RandIntruder = -1;
+   float SpamtonPause;
 
    public GameObject[] ExtraObjects;
    int ExtraObj;
@@ -140,6 +143,7 @@ public class LibraryAnomalies : MonoBehaviour {
       switch (RandomAnomaly) {
          case 0:
             IntruderInit();
+            Mod.LogAnomalies(new string[] { "Space Ex-Boyfriend", "Spamton G Spamton" }[RandIntruder]);
             break;
          case 1:
             ExtraInit();
@@ -176,16 +180,32 @@ public class LibraryAnomalies : MonoBehaviour {
 
    public void IntruderInit () {
       //Intruder.SetActive(true);
-      IntruderCor = StartCoroutine(SpaceBoyfriendAnim());
+      RandIntruder = Rnd.Range(0, Intruder.Length);
+
+      switch (RandIntruder) {
+         case 0:
+            IntruderCor = StartCoroutine(SpaceBoyfriendAnim());
+            break;
+         case 1:
+            IntruderCor = StartCoroutine(SpamtonGSpamtonAnim());
+            break;
+         default:
+            break;
+      }
+      
       //Music.clip = SBTheme;
       //Music.volume = .25f;
-      Music.Play();
+      Music[RandIntruder].Play();
    }
 
    public void FixIntruder () {
-      Intruder.sprite = null;
+      for (int i = 0; i < Intruder.Length; i++) {
+         Intruder[i].sprite = null;
+         Music[i].Stop();
+      }
+      
       //Music.volume = 1f;
-      Music.Stop();
+      
       StopCoroutine(IntruderCor);
    }
 
@@ -193,16 +213,37 @@ public class LibraryAnomalies : MonoBehaviour {
       int counter = 0;
       while (true) {
          if (Mod.CameraPos != 1) {
-            Music.volume = 0;
+            Music[0].volume = 0;
          }
          else {
             //Music.clip = SBTheme;
-            Music.volume = .25f;
+            Music[0].volume = .25f;
          }
          counter++;
          counter %= 4;
-         Intruder.sprite = SpaceBoyfriend[counter];
+         Intruder[0].sprite = SpaceBoyfriend[counter];
          yield return new WaitForSeconds(.1f);
+      }
+   }
+
+   IEnumerator SpamtonGSpamtonAnim () {
+      int counter = 0;
+      
+      while (true) {
+         if (Mod.CameraPos != 1) {
+            Music[1].volume = 0;
+         }
+         else {
+            //Music.clip = SBTheme;
+            Music[1].volume = .5f;
+         }
+         counter++;
+         counter %= 389;
+         Intruder[1].sprite = SpamtonGSpamton[counter];
+         SpamtonPause = float.Parse(SpamtonGSpamton[counter].name.Substring(16, 4)); //Uses the name of the sprite to get the length of the pause
+         //Debug.Log(SpamtonGSpamton[counter].name);
+         //Debug.Log(SpamtonPause);
+         yield return new WaitForSeconds(SpamtonPause);
       }
    }
 
@@ -214,7 +255,7 @@ public class LibraryAnomalies : MonoBehaviour {
       do {
          ExtraObj = Rnd.Range(0, ExtraObjects.Length); //Prevent the door opening while the door is replaced
       } while (ActiveAnomalies[4] && ExtraObj == 4);
-      
+      //ExtraObj = 4;
       ExtraObjects[ExtraObj].SetActive(true);
       if (ExtraObj == 4) {
          ExtraDoor = true;
@@ -247,7 +288,6 @@ public class LibraryAnomalies : MonoBehaviour {
 
    public void LightInit () {
       LightIndex = Rnd.Range(0, 3);
-      LightIndex = 2;
       for (int i = 0; i < 4; i++) {
          LightAnomaly[i + 4 * LightIndex].SetActive(false);
          FiresForCandles[i + 4 * LightIndex].SetActive(false);
@@ -321,7 +361,7 @@ public class LibraryAnomalies : MonoBehaviour {
 
    public void MoveInit () {
       MovedObject = Rnd.Range(0, ObjectMovement.Length);
-      MovedObject = 5;
+
       /*do {
          MovedObject = Rnd.Range(0, 3);
       } while ((PCDis && MovedObject == 1) || (PCMove && MovedObject == 2));
