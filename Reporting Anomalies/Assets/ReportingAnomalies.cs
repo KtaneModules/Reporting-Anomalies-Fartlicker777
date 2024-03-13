@@ -117,7 +117,7 @@ public class ReportingAnomalies : MonoBehaviour {
    public int CameraPos;
 
    public static bool FirstRAPresent;
-   bool CanModuleOperate = true;
+   public bool CanModuleOperate = true;
 
    int AnomalyRNG;
 
@@ -340,6 +340,9 @@ public class ReportingAnomalies : MonoBehaviour {
    #region Buttons
 
    void LeftPress () {
+      if (!CanModuleOperate) {
+         return;
+      }
       ViewingRooms[CameraPos] = false;
       CameraPos--;
       CameraPos = CameraPos < 0 ? CameraPos + CameraMats.Length : CameraPos;
@@ -355,7 +358,9 @@ public class ReportingAnomalies : MonoBehaviour {
    }
 
    void RightPress () {
-
+      if (!CanModuleOperate) {
+         return;
+      }
       ViewingRooms[CameraPos] = false;
       CameraPos++;
       CameraPos %= CameraMats.Length;
@@ -668,7 +673,7 @@ public class ReportingAnomalies : MonoBehaviour {
             break;
          }
          if (i == 2 && !MadeAnomaly) {
-            Debug.LogFormat("[Reporting Anomalies #{0}] The ~~town~~ house is too ~~evil~~ anomalous to find ~~anyone good~~ create any more anomalies!", ModuleId); //le funny town of salem reference
+            Debug.LogFormat("[Reporting Anomalies #{0}] The ~~town~~ house is too ~~evil~~ anomalous to ~~find anyone good~~ create any more anomalies!", ModuleId); //le funny town of salem reference
          }
       }
 
@@ -687,8 +692,14 @@ public class ReportingAnomalies : MonoBehaviour {
 
    void Update () {
       BrokenCam = StaticCam;
-      DeloadRooms();
-      RenderCameraMaterials();
+      if (CanModuleOperate) {
+         DeloadRooms();
+         RenderCameraMaterials();
+      }
+      else {
+         LoadingScreen.SetActive(true);
+      }
+
       if (CameraPos == BrokenCam) { //If
          RightButton.OnInteract();
       }
