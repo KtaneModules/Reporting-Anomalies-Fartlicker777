@@ -103,6 +103,14 @@ public class ReportingAnomalies : MonoBehaviour {
       "PLEASE LOCATE THE ANOMALIES AND SEND REPORTS ASAP"
    };
 
+   string[] AltEmergencyText = {
+      "This is a message for Grace Vanderwhaal:",
+      "Emergency rotating_light fuckass bob will NOT pay for my dinner.",
+      "Find the differecbnes now!",
+      " ...Or face the rath of the king of Texas.",
+      "We are currently on lockdown."
+   };
+
    bool Filing;
 
    //Boss mod shit
@@ -286,6 +294,9 @@ public class ReportingAnomalies : MonoBehaviour {
       }
 
       AnomalyRNG = Rnd.Range(AnomalyRNGLowerBound, AnomalyRNGUpperBound);
+      if (Application.isEditor) {
+         AnomalyRNG = 100;
+      }
       if (ModifiedAnomalyRNG) {
          Debug.LogFormat("[Reporting Anomalies #{0}] The mission you are playing has altered the RNG of anomalies appearing. The range of the frequency of anomalies is from {1}% to {2}%", ModuleId, AnomalyRNGLowerBound, AnomalyRNGUpperBound);
       }
@@ -623,14 +634,27 @@ public class ReportingAnomalies : MonoBehaviour {
       Flash = StartCoroutine(FlipWarningState());
       WarningSoundSystem.Play();
       yield return new WaitForSeconds(2f);
-      for (int j = 0; j < 3; j++) {
-         for (int i = 0; i < EmergencyText[j].Length; i++) {
-            WarningT.text += EmergencyText[j][i].ToString();
-            yield return new WaitForSeconds(.08f);
+      if (Rnd.Range(0, 20) == 0) { //Fish
+         for (int j = 0; j < 5; j++) {
+            for (int i = 0; i < AltEmergencyText[j].Length; i++) {
+               WarningT.text += AltEmergencyText[j][i].ToString();
+               yield return new WaitForSeconds(.08f);
+            }
+            yield return new WaitForSeconds(1f);
+            WarningT.text = "";
          }
-         yield return new WaitForSeconds(1f);
-         WarningT.text = "";
       }
+      else { //Default emergency text
+         for (int j = 0; j < 3; j++) {
+            for (int i = 0; i < EmergencyText[j].Length; i++) {
+               WarningT.text += EmergencyText[j][i].ToString();
+               yield return new WaitForSeconds(.08f);
+            }
+            yield return new WaitForSeconds(1f);
+            WarningT.text = "";
+         }
+      }
+      
       StopCoroutine(Flash);
       WarningSystem.SetActive(false);
       WarningSoundSystem.Stop();
